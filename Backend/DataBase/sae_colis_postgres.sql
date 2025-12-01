@@ -1,115 +1,111 @@
--- version PostgreSQL
+-- version V3 PostgreSQL
 -- `CREATE DATABASE suivi_colis_sae;` puis this-> `\c suivi_colis_sae`.
 
--- Table departement
-CREATE TABLE IF NOT EXISTS departement (
-    id_departement integer PRIMARY KEY,
+-- Table Departement
+CREATE TABLE departement (
+    id_departement INTEGER PRIMARY KEY,
     nom VARCHAR(100) NOT NULL UNIQUE,
     telephone VARCHAR(20),
-    budget_total INT DEFAULT 0,
-    budget_utilise INT DEFAULT 0
+    budget_total INTEGER DEFAULT 0,
+    budget_utilise INTEGER DEFAULT 0
 );
 
--- Table role
-CREATE TABLE IF NOT EXISTS role (
-    id_role integer PRIMARY KEY,
+-- Table Role
+CREATE TABLE role (
+    id_role INTEGER PRIMARY KEY,
     libelle VARCHAR(50) NOT NULL UNIQUE
 );
 
--- Table utilisateur (auth CAS)
-CREATE TABLE IF NOT EXISTS utilisateur (
-    id_utilisateur integer PRIMARY KEY,
+-- Table Utilisateur (auth via CAS)
+CREATE TABLE utilisateur (
+    id_utilisateur INTEGER PRIMARY KEY,
     uid_cas VARCHAR(80) NOT NULL UNIQUE,
     access_token_api_cas VARCHAR(200) NOT NULL,
-    full_name VARCHAR(80) NOT NULL,
+    fullName VARCHAR(80) NOT NULL,
     email VARCHAR(120) NOT NULL UNIQUE,
-    role_id INT NOT NULL,
-    departement_id INT,
+    role_id INTEGER NOT NULL,
+    departement_id INTEGER,
     FOREIGN KEY (role_id) REFERENCES role(id_role),
     FOREIGN KEY (departement_id) REFERENCES departement(id_departement) ON DELETE SET NULL
 );
 
--- Table fournisseur
-CREATE TABLE IF NOT EXISTS fournisseur (
-    id_fournisseur integer PRIMARY KEY,
+-- Table Fournisseur
+CREATE TABLE fournisseur (
+    id_fournisseur INTEGER PRIMARY KEY,
     nom VARCHAR(150) NOT NULL,
     contact_nom VARCHAR(120),
     contact_email VARCHAR(120),
     contact_telephone VARCHAR(30)
 );
 
--- Table bon_commande
-CREATE TABLE IF NOT EXISTS bon_commande (
-    id_bon_commande integer PRIMARY KEY,
-    numero_commande VARCHAR(50) NOT NULL UNIQUE,
-    date_commande DATE NOT NULL,
-    date_estimee_livraison DATE,
-    montant_estime NUMERIC(10,2) DEFAULT 0,
-    statut VARCHAR(30) DEFAULT 'en preparation',
-    departement_id INT NOT NULL,
-    fournisseur_id INT NOT NULL,
-    createur_id INT NOT NULL,
-    commentaire TEXT,
-    FOREIGN KEY (departement_id) REFERENCES departement(id_departement),
+-- Table Devis
+CREATE TABLE devis (
+    id_devis INTEGER PRIMARY KEY,
+    date_demande DATE NOT NULL,
+    objet VARCHAR(255),
+    montant_estime DECIMAL(10,2),
+    fichier_pdf LONGBLOB,
+    statut VARCHAR(50) DEFAULT 'en_attente',
+    fournisseur_id INTEGER NOT NULL,
+    createur_id INTEGER NOT NULL,
     FOREIGN KEY (fournisseur_id) REFERENCES fournisseur(id_fournisseur),
     FOREIGN KEY (createur_id) REFERENCES utilisateur(id_utilisateur)
 );
 
--- Table bon_commande_ligne
-CREATE TABLE IF NOT EXISTS bon_commande_ligne (
-    id_ligne integer PRIMARY KEY,
-    bon_commande_id INT NOT NULL,
-    designation VARCHAR(255) NOT NULL,
-    quantite INT NOT NULL DEFAULT 1,
-    prix_unitaire NUMERIC(10,2) DEFAULT 0,
-    FOREIGN KEY (bon_commande_id) REFERENCES bon_commande(id_bon_commande)
+-- Table Bon de Commande
+CREATE TABLE bon_commande (
+    id_bon_commande INTEGER PRIMARY KEY,
+    numero_commande VARCHAR(50) NOT NULL UNIQUE,
+    date_commande DATE NOT NULL,
+    date_estimee_livraison DATE,
+    montant_estime DECIMAL(10,2) DEFAULT 0,
+    statut VARCHAR(30) DEFAULT 'en_preparation',
+    departement_id INTEGER NOT NULL,
+    fournisseur_id INTEGER NOT NULL,
+    createur_id INTEGER NOT NULL,
+    devis_id INTEGER NOT NULL,
+    commentaire TEXT,
+    FOREIGN KEY (departement_id) REFERENCES departement(id_departement),
+    FOREIGN KEY (fournisseur_id) REFERENCES fournisseur(id_fournisseur),
+    FOREIGN KEY (createur_id) REFERENCES utilisateur(id_utilisateur),
+    FOREIGN KEY (devis_id) REFERENCES devis(id_devis)
 );
 
--- Table statut_colis
-CREATE TABLE IF NOT EXISTS statut_colis (
-    id_statut integer PRIMARY KEY,
+-- Table Statut Colis
+CREATE TABLE statut_colis (
+    id_statut INTEGER PRIMARY KEY,
     libelle VARCHAR(50) NOT NULL UNIQUE
 );
 
--- Table colis
-CREATE TABLE IF NOT EXISTS colis (
-    id_colis integer PRIMARY KEY,
-    bon_commande_id INT NOT NULL,
-    statut_id INT NOT NULL,
-    code_barres VARCHAR(128),
+-- Table Colis
+CREATE TABLE colis (
+    id_colis INTEGER PRIMARY KEY,
+    bon_commande_id INTEGER NOT NULL,
+    statut_id INTEGER NOT NULL,
     numero_suivi VARCHAR(128),
-    destinataire_nom VARCHAR(120),
-    destinataire_bureau VARCHAR(80),
+    code_barres VARCHAR(128),
+    destinataire_id INTEGER,
     date_reception DATE,
-    date_retrait TIMESTAMP WITHOUT TIME ZONE,
+    date_retrait TIMESTAMP,
     commentaire TEXT,
+    receptionne_par INTEGER,
     FOREIGN KEY (bon_commande_id) REFERENCES bon_commande(id_bon_commande),
-    FOREIGN KEY (statut_id) REFERENCES statut_colis(id_statut)
+    FOREIGN KEY (statut_id) REFERENCES statut_colis(id_statut),
+    FOREIGN KEY (destinataire_id) REFERENCES utilisateur(id_utilisateur),
+    FOREIGN KEY (receptionne_par) REFERENCES utilisateur(id_utilisateur)
 );
 
--- Table notification
-CREATE TABLE IF NOT EXISTS notification (
-    id_notification integer PRIMARY KEY,
-    id_utilisateur INT NOT NULL,
-    message VARCHAR(255) NOT NULL,
-    date_envoi TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+-- Table Notification
+CREATE TABLE notification (
+    id_notification INTEGER PRIMARY KEY,
+    id_utilisateur INTEGER NOT NULL,
+    message_notification VARCHAR(255) NOT NULL,
+    date_envoi TIMESTAMP,
     lu BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur) ON DELETE CASCADE
-);
-
--- Table devis
-CREATE TABLE IF NOT EXISTS devis (
-    id_devis integer PRIMARY KEY,
-    date_demande DATE NOT NULL,
-    objet VARCHAR(255),
-    montant_estime NUMERIC(10,2),
-    fichier_pdf BYTEA,
-    statut VARCHAR(50) DEFAULT 'en_attente',
-    fournisseur_id INT NOT NULL,
-    CONSTRAINT fk_devis_fournisseur FOREIGN KEY (fournisseur_id) REFERENCES fournisseur(id_fournisseur)
+    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur)
 );
 
 -- Index
-CREATE INDEX IF NOT EXISTS idx_utilisateur_departement ON utilisateur (departement_id);
-CREATE INDEX IF NOT EXISTS idx_bc_numero ON bon_commande (numero_commande);
-CREATE INDEX IF NOT EXISTS idx_colis_suivi ON colis (numero_suivi);
+CREATE INDEX idx_utilisateur_departement ON utilisateur (departement_id);
+CREATE INDEX idx_bc_numero ON bon_commande (numero_commande);
+CREATE INDEX idx_colis_suivi ON colis (numero_suivi);
