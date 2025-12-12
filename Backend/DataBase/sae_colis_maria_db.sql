@@ -105,6 +105,15 @@ CREATE TABLE notification (
     FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur)
 );
 
+CREATE TABLE historique_colis (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_colis INT NOT NULL,
+    action VARCHAR(255) NOT NULL,
+    date_action DATETIME DEFAULT CURRENT_TIMESTAMP,
+    utilisateur VARCHAR(100) DEFAULT 'postal_iut',
+    FOREIGN KEY (id_colis) REFERENCES colis(id_colis)
+);
+
 -- Index
 CREATE INDEX idx_utilisateur_departement ON utilisateur (departement_id);
 CREATE INDEX idx_bc_numero ON bon_commande (numero_commande);

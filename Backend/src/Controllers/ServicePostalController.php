@@ -12,9 +12,7 @@ class ServicePostalController
     // Page principale du service postal
     public function index()
     {
-        // Pour l'instant, pas d'authentification stricte
-        // Tu pourras ajouter la vérification CAS plus tard
-        session_start();
+
         
         // Récupère toutes les données nécessaires
         $colisRecusAujourdhui = $this->model->getColisRecusAujourdhui();
@@ -24,7 +22,7 @@ class ServicePostalController
         $colisTransferesHist = $this->model->getColisTransferesHistorique();
 
         // Charge la vue
-        include 'src/Views/ServicePostal/index.php';
+        include 'Backend/src/Views/ServicePostal/index.php';
     }
 
     // Transfère un colis (appelé en AJAX)
