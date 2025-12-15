@@ -12,8 +12,6 @@ class ServicePostalController
     // Page principale du service postal
     public function index()
     {
-
-        
         // Récupère toutes les données nécessaires
         $colisRecusAujourdhui = $this->model->getColisRecusAujourdhui();
         $colisTransferes = $this->model->getColisTransferes();
@@ -21,8 +19,13 @@ class ServicePostalController
         $colisRecus = $this->model->getColisRecusUniv();
         $colisTransferesHist = $this->model->getColisTransferesHistorique();
 
-        // Charge la vue
-        include 'Backend/src/Views/ServicePostal/index.php';
+        // Charge la vue en utilisant __DIR__ pour la compatibilité multi-plateforme
+        $viewPath = __DIR__ . '/../views/ServicePostal/index.php';
+        if (file_exists($viewPath)) {
+            require $viewPath;
+        } else {
+            throw new \Exception("Vue non trouvée : {$viewPath}");
+        }
     }
 
     // Transfère un colis (appelé en AJAX)

@@ -1,9 +1,5 @@
 <?php
 
-namespace SAE\Auth;
-
-use Error;
-
 final class CasAuthenticator
 {
     private CasConfiguration $configuration;

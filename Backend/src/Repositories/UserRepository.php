@@ -1,19 +1,13 @@
 <?php
 
-namespace SAE\Repositories;
-
-use SAE\Auth\User;
-
-require_once __DIR__ . '/../Models/Model.php';
-
 class UserRepository
 {
-    private static ?\PDO $db = null;
+    private static $db = null;
 
-    private static function getDb(): \PDO
+    private static function getDb()
     {
         if (self::$db === null) {
-            $model = \Model::getModel();
+            $model = Model::getModel();
             self::$db = $model->bd;
         }
         return self::$db;

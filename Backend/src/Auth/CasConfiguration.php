@@ -1,7 +1,5 @@
 <?php
 
-namespace SAE\Auth;
-
 class CasConfiguration
 {
     private string $host;

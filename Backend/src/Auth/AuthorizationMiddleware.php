@@ -1,7 +1,5 @@
 <?php
 
-namespace SAE\Auth;
-
 class AuthorizationMiddleware
 {
     /**

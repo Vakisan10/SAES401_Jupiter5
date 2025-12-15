@@ -1,9 +1,5 @@
 <?php
 
-namespace SAE\Auth;
-
-use SAE\Repositories\UserRepository;
-
 class AuthMiddleware
 {
     private CasAuthenticator $authenticator;

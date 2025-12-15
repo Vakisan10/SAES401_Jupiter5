@@ -1,10 +1,5 @@
 <?php
 
-namespace SAE\Controllers;
-
-use SAE\Auth\User;
-use SAE\Models\IutPostalModels;
-
 class IutPostalController {
 
     private $model;

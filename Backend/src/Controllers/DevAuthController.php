@@ -1,9 +1,5 @@
 <?php
 
-namespace SAE\Controllers;
-
-use SAE\Repositories\UserRepository;
-
 class DevAuthController
 {
     /**

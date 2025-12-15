@@ -1,7 +1,5 @@
 <?php
 
-namespace SAE\Core;
-
 class Router
 {
     private array $routes = [];

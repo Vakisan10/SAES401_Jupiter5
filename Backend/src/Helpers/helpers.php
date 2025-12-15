@@ -76,9 +76,9 @@ function e(?string $value): string
 /**
  * Retourne l'utilisateur actuellement connecté
  *
- * @return \SAE\Auth\User|null
+ * @return User|null
  */
-function currentUser(): ?\SAE\Auth\User
+function currentUser()
 {
     return $_SESSION['user'] ?? null;
 }

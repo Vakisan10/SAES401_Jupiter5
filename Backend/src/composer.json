@@ -2,17 +2,5 @@
     "name": "sae/backend",
     "require": {
         "apereo/phpcas": "^1.6"
-    },
-    "autoload": {
-        "psr-4": {
-            "SAE\\Auth\\": "Auth/",
-            "SAE\\Controllers\\": "Controllers/",
-            "SAE\\Models\\": "Models/",
-            "SAE\\Core\\": "Core/",
-            "SAE\\Repositories\\": "Repositories/"
-        },
-        "files": [
-            "Helpers/helpers.php"
-        ]
     }
 }

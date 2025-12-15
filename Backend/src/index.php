@@ -8,11 +8,8 @@
 // Charger les variables d'environnement
 require_once __DIR__ . '/bootstrap.php';
 
-require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/Helpers/helpers.php';
-
-use SAE\Auth\{CasConfiguration, CasAuthenticator, AuthMiddleware, AuthorizationMiddleware};
-use SAE\Core\Router;
+// Charger toutes les classes (remplace l'autoloader Composer)
+require_once __DIR__ . '/includes.php';
 
 // Charger la configuration
 $config = require __DIR__ . '/../config/app.php';
@@ -44,50 +41,50 @@ $router = new Router();
 // ========== ROUTES GET ==========
 
 // Dashboard
-$router->get('/postal/dashboard', 'SAE\\Controllers\\IutPostalController', 'dashboard');
-$router->get('/postal', 'SAE\\Controllers\\IutPostalController', 'dashboard'); // Alias
+$router->get('/postal/dashboard', 'IutPostalController', 'dashboard');
+$router->get('/postal', 'IutPostalController', 'dashboard'); // Alias
 
 // Colis - Consultation
-$router->get('/postal/colis/recus', 'SAE\\Controllers\\IutPostalController', 'colisRecus');
-$router->get('/postal/colis/remis', 'SAE\\Controllers\\IutPostalController', 'colisRemis');
-$router->get('/postal/colis/attente', 'SAE\\Controllers\\IutPostalController', 'colisEnAttente');
-$router->get('/postal/colis/details/:id', 'SAE\\Controllers\\IutPostalController', 'colisDetails');
+$router->get('/postal/colis/recus', 'IutPostalController', 'colisRecus');
+$router->get('/postal/colis/remis', 'IutPostalController', 'colisRemis');
+$router->get('/postal/colis/attente', 'IutPostalController', 'colisEnAttente');
+$router->get('/postal/colis/details/:id', 'IutPostalController', 'colisDetails');
 
 // Colis - Actions
-$router->get('/postal/colis/ajouter', 'SAE\\Controllers\\IutPostalController', 'ajouterColis');
-$router->get('/postal/colis/modifier/:id', 'SAE\\Controllers\\IutPostalController', 'modifierColis');
-$router->get('/postal/colis/livrer/:id', 'SAE\\Controllers\\IutPostalController', 'actionLivrer');
-$router->get('/postal/colis/retirer/:id', 'SAE\\Controllers\\IutPostalController', 'actionRetirer');
+$router->get('/postal/colis/ajouter', 'IutPostalController', 'ajouterColis');
+$router->get('/postal/colis/modifier/:id', 'IutPostalController', 'modifierColis');
+$router->get('/postal/colis/livrer/:id', 'IutPostalController', 'actionLivrer');
+$router->get('/postal/colis/retirer/:id', 'IutPostalController', 'actionRetirer');
 
 // Colis - Recherche
-$router->get('/postal/colis/recherche', 'SAE\\Controllers\\IutPostalController', 'rechercheColis');
+$router->get('/postal/colis/recherche', 'IutPostalController', 'rechercheColis');
 
 // Colis non identifiés
-$router->get('/postal/colis/non-identifies', 'SAE\\Controllers\\IutPostalController', 'nonIdentifies');
-$router->get('/postal/colis/marquer-non-identifie/:id', 'SAE\\Controllers\\IutPostalController', 'actionMarquerNonIdentifier');
+$router->get('/postal/colis/non-identifies', 'IutPostalController', 'nonIdentifies');
+$router->get('/postal/colis/marquer-non-identifie/:id', 'IutPostalController', 'actionMarquerNonIdentifier');
 
 // Historique
-$router->get('/postal/historique', 'SAE\\Controllers\\IutPostalController', 'historiqueGlobal');
+$router->get('/postal/historique', 'IutPostalController', 'historiqueGlobal');
 
 // ========== ROUTES POST ==========
 
 // Colis - Création/Modification
-$router->post('/postal/colis/ajouter', 'SAE\\Controllers\\IutPostalController', 'ajouterColis');
-$router->post('/postal/colis/modifier/:id', 'SAE\\Controllers\\IutPostalController', 'updateColis');
-$router->post('/postal/colis/update', 'SAE\\Controllers\\IutPostalController', 'actionModifier'); // Legacy
+$router->post('/postal/colis/ajouter', 'IutPostalController', 'ajouterColis');
+$router->post('/postal/colis/modifier/:id', 'IutPostalController', 'updateColis');
+$router->post('/postal/colis/update', 'IutPostalController', 'actionModifier'); // Legacy
 
 // Colis non identifiés - Assignation
-$router->post('/postal/colis/assigner', 'SAE\\Controllers\\IutPostalController', 'actionAssigner');
+$router->post('/postal/colis/assigner', 'IutPostalController', 'actionAssigner');
 
 // ========== ROUTES AUTH ==========
 
-$router->get('/auth/logout', 'SAE\\Controllers\\AuthController', 'logout');
+$router->get('/auth/logout', 'AuthController', 'logout');
 
 // ========== ROUTES DEV (mode développement uniquement) ==========
 
 if ($config['env'] === 'development') {
-    $router->get('/dev-login', 'SAE\\Controllers\\DevAuthController', 'loginForm');
-    $router->post('/dev-login', 'SAE\\Controllers\\DevAuthController', 'loginSubmit');
+    $router->get('/dev-login', 'DevAuthController', 'loginForm');
+    $router->post('/dev-login', 'DevAuthController', 'loginSubmit');
 }
 
 // ========== DISPATCH ==========
@@ -104,15 +101,13 @@ try {
     // Dispatcher vers le contrôleur
     [$controllerClass, $methodName, $params] = $router->dispatch($method, $uri);
 
-    // Instancier le contrôleur
-    $controllerFullClass = "\\{$controllerClass}";
-
+    // Instancier le contrôleur (plus besoin de \\ devant car pas de namespace)
     // Routes publiques : pas d'injection User
     if (in_array($uri, $publicRoutes)) {
-        $controller = new $controllerFullClass();
+        $controller = new $controllerClass();
     } else {
         // Routes protégées : injection User
-        $controller = new $controllerFullClass($currentUser);
+        $controller = new $controllerClass($currentUser);
     }
 
     // Appeler la méthode

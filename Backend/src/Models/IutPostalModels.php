@@ -1,15 +1,11 @@
 <?php
 
-namespace SAE\Models;
-
-require_once __DIR__ . '/Model.php';
-
 class IutPostalModels {
 
     private $db;
 
     public function __construct() {
-        $this->db = \Model::getModel()->bd;
+        $this->db = Model::getModel()->bd;
     }
 
     /* ===================== STATISTIQUES ===================== */
@@ -50,14 +46,14 @@ class IutPostalModels {
             ORDER BY c.date_reception DESC
             LIMIT 5
         ");
-        return $sql->fetchAll(\PDO::FETCH_ASSOC);
+        return $sql->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getRepartitionStatuts() {
         $sql = "SELECT statut_id AS statut, COUNT(*) AS total
                 FROM colis
                 GROUP BY statut_id";
-        return $this->db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getTopDepartements() {
@@ -67,7 +63,7 @@ class IutPostalModels {
                 GROUP BY c.destinataire_id
                 ORDER BY total DESC
                 LIMIT 5";
-        return $this->db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /* ===================== LISTE DES COLIS ===================== */
@@ -85,11 +81,11 @@ class IutPostalModels {
             LEFT JOIN departement d ON c.destinataire_id = d.id_departement
             ORDER BY c.date_reception DESC
         ";
-        return $this->db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getAllStatuts() {
-        return $this->db->query("SELECT * FROM statut_colis")->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->db->query("SELECT * FROM statut_colis")->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getColisFiltre($statut) {
@@ -110,7 +106,7 @@ class IutPostalModels {
         $req = $this->db->prepare($sql);
         $req->execute([$statut]);
 
-        return $req->fetchAll(\PDO::FETCH_ASSOC);
+        return $req->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getColisRemis() {
@@ -130,7 +126,7 @@ class IutPostalModels {
             ORDER BY c.date_retrait DESC
         ";
         $req = $this->db->query($sql);
-        return $req->fetchAll(\PDO::FETCH_ASSOC);
+        return $req->fetchAll(PDO::FETCH_ASSOC);
     }
 
 
@@ -163,7 +159,7 @@ class IutPostalModels {
         $req = $this->db->prepare($sql);
         $req->execute([$motcle, $motcle, $motcle, $motcle]);
 
-        return $req->fetchAll(\PDO::FETCH_ASSOC);
+        return $req->fetchAll(PDO::FETCH_ASSOC);
     }
 
 
@@ -200,7 +196,7 @@ class IutPostalModels {
         $req = $this->db->prepare($sql);
         $req->execute([$num_bc]);
 
-        return $req->fetch(\PDO::FETCH_ASSOC);
+        return $req->fetch(PDO::FETCH_ASSOC);
     }
 
 
@@ -227,7 +223,7 @@ class IutPostalModels {
         ";
         $req = $this->db->prepare($sql);
         $req->execute([$id]);
-        return $req->fetch(\PDO::FETCH_ASSOC);
+        return $req->fetch(PDO::FETCH_ASSOC);
     }
 
 
@@ -264,7 +260,7 @@ class IutPostalModels {
                 ORDER BY date_action DESC";
         $req = $this->db->prepare($sql);
         $req->execute([$id_colis]);
-        return $req->fetchAll(\PDO::FETCH_ASSOC);
+        return $req->fetchAll(PDO::FETCH_ASSOC);
     }
 
 
@@ -294,7 +290,7 @@ class IutPostalModels {
             WHERE c.statut_id = 4 OR c.destinataire_id IS NULL
             ORDER BY c.date_reception DESC
         ";
-        return $this->db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
 
@@ -327,7 +323,7 @@ class IutPostalModels {
     }
 
     public function getAllDepartement(){
-        return $this->db->query("SELECT * FROM departement")->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->db->query("SELECT * FROM departement")->fetchAll(PDO::FETCH_ASSOC);
 
     }
 
@@ -387,7 +383,7 @@ class IutPostalModels {
             WHERE c.statut_id = 1
             ORDER BY c.date_reception DESC";
 
-        return $this->db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
 
@@ -411,7 +407,7 @@ class IutPostalModels {
         ";
 
         $req = $this->db->query($sql);
-        return $req->fetchAll(\PDO::FETCH_ASSOC);
+        return $req->fetchAll(PDO::FETCH_ASSOC);
     }
 
 
@@ -442,7 +438,7 @@ class IutPostalModels {
 
     public function getBonCommandes() {
         $sql = "SELECT id_bon_commande, numero_commande FROM bon_commande ORDER BY date_commande DESC";
-        return $this->db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
     
     public function updateColisById($id_colis, $data) {
