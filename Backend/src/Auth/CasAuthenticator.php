@@ -57,15 +57,12 @@ final class CasAuthenticator
         $changeSessionId = $this->configuration->shouldChangeSessionId();
 
         \phpCAS::client(CAS_VERSION_2_0, $host, $port, $context, $serviceBaseUrl, $changeSessionId);
-/*
         $caCertPath = $this->configuration->getCaCertPath();
         if ($caCertPath !== null) {
             \phpCAS::setCasServerCACert($caCertPath);
         } else {
             \phpCAS::setNoCasServerValidation();
         }
-*/
-        \phpCas::setNoCasServerValidation(); // attention là je force sans le certificat pem
         \phpCAS::setLang(PHPCAS_LANG_FRENCH);
 
         $this->phpCasBootstrapped = true;

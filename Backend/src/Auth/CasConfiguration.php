@@ -7,7 +7,7 @@ class CasConfiguration
     private string $host;
     private string $context;
     private int $port;
-    private string $caCertPath;
+    private string|null $caCertPath;
     private string $serviceBaseUrl;
     private bool $changeSessionId;
 
@@ -15,7 +15,7 @@ class CasConfiguration
         string $host,
         string $context = '/cas/',
         int $port = 443,
-        string $caCertPath,
+        string|null $caCertPath,
         string $serviceBaseUrl,
         bool $changeSessionId = true
     ) {
