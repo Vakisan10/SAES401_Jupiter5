@@ -4,6 +4,9 @@
  * À inclure au début de index.php
  */
 
+// ============ COMPOSER AUTOLOADER (phpCAS) ============
+require_once __DIR__ . '/vendor/autoload.php';
+
 // ============ CORE ============
 require_once __DIR__ . '/Core/Router.php';
 
