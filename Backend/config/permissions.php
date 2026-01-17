@@ -1,22 +1,40 @@
 <?php
 
 return [
-    // Administrateur : accès total
+    // Le admin a donc tous accès
     'admin' => [
-        'postal/*',
-        'devis/*',
-        'admin/*',
+        'admin/*',              
+        'departement/*',        
+        'finance/*',           
+        'directeur_iut/*',     
+        'postal_univ/*',        
+        'postal_iut/*',         
     ],
 
-    // Personnel du service postal IUT : gestion complète des colis
+    
+    // SERVICE FINANCIER
+    'finance' => [
+        'finance/*',
+    ],
+
+    // DIRECTEUR
+    'directeur' => [
+        'directeur_iut/*',
+    ],
+
+    // SERVICE POSTAL UNIVERSITÉ
+    'postal_univ' => [
+        'postal_univ/*',
+    ],
+
+    // SERVICE POSTAL IUT
     'postal_iut' => [
-        'postal/*',
+        'postal_iut/*',
     ],
 
-    // Acteur (étudiant, personnel) : consultation uniquement
+    // DÉPARTEMENT / ACTEUR
     'acteur' => [
-        'postal/colis/details/*',
-        'postal/colis/recherche',
-        'postal/dashboard',
+        'departement/*',
     ],
+
 ];
