@@ -65,7 +65,7 @@
                             <td><span class="badge badge-<?= strtolower(str_replace(' ', '_', $c["statut"])) ?>"><?= $c["statut"] ?></span></td>
                             <td><?= $c["date_reception"] ?></td>
                             <td>
-                                <?php if ($c["statut_id"] == 5): ?>
+                                <?php if ($c["statut_id"] == 1): ?>
                                     <a class="btn btn-sm btn-primary" href="/postal-univ/transferer?id=<?= $c["id_colis"] ?>">Transferer vers IUT</a>
                                 <?php else: ?>
                                     —

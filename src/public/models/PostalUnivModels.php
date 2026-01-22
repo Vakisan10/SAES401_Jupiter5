@@ -31,7 +31,7 @@ class PostalUnivModels {
 
     public function getDerniersColis() {
         return $this->db->query("
-            SELECT 
+            SELECT
                 c.id_colis,
                 c.numero_suivi,
                 c.date_reception,
@@ -48,8 +48,8 @@ class PostalUnivModels {
 
         // 1️⃣ Trouver le bon de commande
         $req = $this->db->prepare("
-            SELECT id_bon_commande 
-            FROM bon_commande 
+            SELECT id_bon_commande
+            FROM bon_commande
             WHERE numero_commande = ?
         ");
         $req->execute([$data["numero_commande"]]);
@@ -84,7 +84,7 @@ class PostalUnivModels {
                 statut_id,
                 commentaire
             )
-            VALUES (?, ?, NOW(), 5, ?)
+            VALUES (?, ?, NOW(), 1, ?)
         ";
 
         $req = $this->db->prepare($sql);
@@ -98,10 +98,10 @@ class PostalUnivModels {
 
     public function getTousLesColis() {
         $sql = "
-            SELECT 
+            SELECT
                 c.id_colis,
                 c.numero_suivi,
-                c.statut_id,          
+                c.statut_id,
                 b.numero_commande,
                 d.nom AS departement,
                 s.libelle AS statut,
@@ -120,7 +120,7 @@ class PostalUnivModels {
     public function transfererVersIUT($id_colis) {
         $sql = "
             UPDATE colis
-            SET statut_id = 6
+            SET statut_id = 2
             WHERE id_colis = ?
         ";
         $req = $this->db->prepare($sql);
@@ -129,7 +129,7 @@ class PostalUnivModels {
 
     public function getColisNonIdentifiesListe() {
         $sql = "
-            SELECT 
+            SELECT
                 c.id_colis,
                 c.numero_suivi,
                 c.date_reception,
@@ -148,7 +148,7 @@ class PostalUnivModels {
     public function getHistorique() {
 
         $sql = "
-            SELECT 
+            SELECT
                 h.date_action,
                 c.id_colis,
                 c.numero_suivi,
@@ -157,7 +157,7 @@ class PostalUnivModels {
                 s.libelle AS statut,
                 h.action
             FROM historique_colis h
-            JOIN colis c ON h.colis_id = c.id_colis
+            JOIN colis c ON h.id_colis = c.id_colis
             LEFT JOIN bon_commande b ON c.bon_commande_id = b.id_bon_commande
             LEFT JOIN departement d ON b.departement_id = d.id_departement
             LEFT JOIN statut_colis s ON c.statut_id = s.id_statut

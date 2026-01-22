@@ -23,7 +23,7 @@ return [
     ],
 
     'postal_iut' => [
-        'postal-iut/*',
+        'postal/*',
     ],
 
     'departement' => [

@@ -130,6 +130,16 @@ INSERT INTO statut_colis (libelle) VALUES
 ('en_attente'),
 ('livre');
 
+-- LES DATA QUI SUIVENT EN BAS NE SONT PAS NECESSAIRES JUSTE FICTIVES
+
+
+
+
+
+
+
+
+
 -- Departements
 INSERT INTO departement (nom, telephone, budget_total, budget_utilise) VALUES
 ('Informatique', '01 49 40 30 01', 50000, 12000),
