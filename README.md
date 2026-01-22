@@ -1,29 +1,85 @@
-![Modélisation](./Documentation/Schema.png)
+# SAE Gestion des Colis
 
-(Windows -> https://www.php.net/downloads.php?usage=web&os=windows&osvariant=linux-ubuntu&version=default)
+Application de gestion des colis pour l'IUT.
+
+![Schema relationnel](./Documentation/Schema-relation.png)
+
+## Prerequis
+
+- PHP 8.3 minimum
+- Composer
+- Docker (optionnel, pour la base de donnees)
+
+## Installation
+
+### 1. Installer PHP et les extensions
+
+**Linux (Ubuntu/Debian)**
+```
+make install-linux
+```
+
+**MacOS**
+```
+make install-macos
+```
+
+**Windows**
+
+Telecharger PHP 8.3 : https://www.php.net/downloads.php
 
 Video for install PHP CLI Windows -> https://www.youtube.com/watch?v=n04w2SzGr_U
 
-- To lance the project backend (PS : You need PHP CLI 8.3 minimum)
-- Need Composer (Packages PHP manager)
-- CAS utilise XM parser les réponses XML du serveur CAS
+Ou utiliser WSL avec Ubuntu si Windows ne marche pas.
 
-Use this command for Linux (distribution Ubuntu)
+### 2. Configurer la base de donnees
+
+Avec Docker :
 ```
-make linux
+cd Database && docker compose -f docker-bd.yaml up -d
 ```
 
-- For install dependances
+### 3. Configurer l'environnement
+
+Copier le fichier d'exemple .env.example et adapter les secrets à vous :
+```
+make env
+```
+
+Modifier `src/.env` selon votre configuration (mot de passe BDD, etc).
+
+### 4. Installer les dependances Composer
+
 ```
 make i
 ```
 
-- For run
+### 5. Lancer le serveur
+
 ```
 make r
 ```
 
-(if the composer.json not found make this in Folder Backend/src)
+Le serveur demarre sur http://localhost:8000
+
+## Commandes utiles
+
+| Commande | Description |
+|----------|-------------|
+| `make install-linux` | Installe PHP et extensions (Ubuntu) |
+| `make install-macos` | Installe PHP et extensions (MacOS) |
+| `make env` | Copie le fichier .env.example |
+| `make i` | Installe les dependances Composer |
+| `make r` | Lance le serveur PHP |
+
+## Acces base de donnees Docker
+
+Entrer dans le conteneur :
 ```
-composer init --name="sae/backend" --require="apereo/phpcas:^1.6" --no-interaction
+docker exec -it sae_db sh
+```
+
+Se connecter a MariaDB :
+```
+mysql -u root -proot_password
 ```
