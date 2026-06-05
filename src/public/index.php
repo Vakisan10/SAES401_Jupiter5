@@ -2,6 +2,8 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../lib-tools/Auth/User.php';
+require_once __DIR__ . '/models/NotificationModels.php';
+require_once __DIR__ . '/services/NotificationService.php';
 
 // Charger le .env avec phpdotenv (createUnsafeImmutable pour que getenv() fonctionne)
 $dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__ . '/..');
