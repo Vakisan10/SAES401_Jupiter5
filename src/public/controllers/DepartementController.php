@@ -37,13 +37,11 @@ class DepartementController {
         ];
 
         $budget = $this->model->getBudgetDepartement($departement_id);
-
         if ($budget) {
             $budget['budget_restant'] = $budget['budget_total'] - $budget['budget_utilise'];
         }
 
         $colis = $this->model->getDerniersColis($departement_id);
-
         require __DIR__ . "/../views/departement/dashboard.php";
     }
 
@@ -52,19 +50,40 @@ class DepartementController {
         require __DIR__ . '/../views/departement/creer-devis.php';
     }
 
+    /**
+     * Méthode mise à jour pour gérer l'upload PDF
+     */
     public function envoyerDevis() {
         $objet          = $_POST["objet"];
         $montant        = $_POST["montant_estime"];
         $fournisseur_id = $_POST["fournisseur_id"];
         $commentaire    = $_POST["commentaire"] ?? null;
+        $createur_id    = $this->getUserId();
 
-        $createur_id = $this->getUserId();
+        // 1. Récupération et validation du fichier PDF
+        $contenu_pdf = null;
+        if (isset($_FILES['fichier_pdf']) && $_FILES['fichier_pdf']['error'] === UPLOAD_ERR_OK) {
+            $tmpPath = $_FILES['fichier_pdf']['tmp_name'];
+            
+            // Vérification stricte du type MIME
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            if ($finfo->file($tmpPath) === 'application/pdf') {
+                $contenu_pdf = file_get_contents($tmpPath);
+            } else {
+                die("Erreur : Le fichier envoyé doit être au format PDF.");
+            }
+        } else {
+            die("Erreur : Aucun fichier valide n'a été reçu.");
+        }
 
+        // 2. Appel au modèle avec le binaire
         $this->model->insertDevis(
             $objet,
             $montant,
             $fournisseur_id,
-            $createur_id
+            $createur_id,
+            $commentaire,
+            $contenu_pdf
         );
 
         header("Location: /departement/dashboard");

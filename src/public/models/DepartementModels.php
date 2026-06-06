@@ -15,8 +15,6 @@ class DepartementModels {
         return $req->fetchColumn() ?: null;
     }
 
-    /* ===== STATS ===== */
-
     public function countColisTotal($departement_id) {
         return $this->db->prepare("
             SELECT COUNT(*) FROM colis c
@@ -59,7 +57,6 @@ class DepartementModels {
         return $req->fetch(PDO::FETCH_ASSOC);
     }
 
-    /* ===== COLIS RECENTS ===== */
 
     public function getDerniersColis($departement_id) {
         $req = $this->db->prepare("
@@ -80,7 +77,6 @@ class DepartementModels {
         return $req->fetchAll(PDO::FETCH_ASSOC);
     }
 
-
     public function getFournisseurs() {
         return $this->db->query("
             SELECT id_fournisseur, nom
@@ -89,41 +85,36 @@ class DepartementModels {
         ")->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /* Créer un devis */
-    public function creerDevis($data) {
-        $sql = "
-            INSERT INTO devis 
-            (date_demande, objet, montant_estime, statut, fournisseur_id, createur_id)
-            VALUES (CURDATE(), ?, ?, 'en_attente', ?, ?)
-        ";
+  
 
-        $req = $this->db->prepare($sql);
-        return $req->execute([
-            $data["objet"],
-            $data["montant"],
-            $data["fournisseur_id"],
-            $data["createur_id"]
-        ]);
-    }
-
-
-    public function insertDevis($objet, $montant, $fournisseur_id, $createur_id) {
-
+    /**
+     * Insère un devis avec un fichier PDF optionnel
+     * @param string $objet
+     * @param float $montant
+     * @param int $fournisseur_id
+     * @param int $createur_id
+     * @param string|null $pdfBlob Contenu binaire ou null
+     */
+    public function insertDevis($objet, $montant, $fournisseur_id, $createur_id, $pdfBlob = null) {
         $sql = "
             INSERT INTO devis
-            (date_demande, objet, montant_estime, statut, fournisseur_id, createur_id)
-            VALUES (CURDATE(), ?, ?, 'en_attente', ?, ?)
+            (date_demande, objet, montant_estime, statut, fournisseur_id, createur_id, fichier_pdf)
+            VALUES (CURDATE(), ?, ?, 'en_attente', ?, ?, ?)
         ";
 
         $req = $this->db->prepare($sql);
-        $req->execute([
-            $objet,
-            $montant,
-            $fournisseur_id,
-            $createur_id
-        ]);
-    }
+        
+        // Liaison des paramètres
+        $req->bindValue(1, $objet);
+        $req->bindValue(2, $montant);
+        $req->bindValue(3, $fournisseur_id);
+        $req->bindValue(4, $createur_id);
+        
+        // Liaison du fichier binaire avec gestion du NULL automatique si $pdfBlob est null
+        $req->bindParam(5, $pdfBlob, PDO::PARAM_LOB);
 
+        return $req->execute();
+    }
 
     public function getMesDevis($id_utilisateur) {
         $sql = "
@@ -159,7 +150,6 @@ class DepartementModels {
             WHERE b.departement_id = ?
             ORDER BY b.id_bon_commande DESC
         ";
-
         $req = $this->db->prepare($sql);
         $req->execute([$departement_id]);
         return $req->fetchAll(PDO::FETCH_ASSOC);
@@ -181,13 +171,10 @@ class DepartementModels {
             WHERE b.departement_id = ?
             ORDER BY c.date_reception DESC
         ";
-
         $req = $this->db->prepare($sql);
         $req->execute([$departement_id]);
         return $req->fetchAll(PDO::FETCH_ASSOC);
     }
-
-
 
     public function getDepensesDepartement($departement_id) {
         $req = $this->db->prepare("
@@ -217,6 +204,4 @@ class DepartementModels {
         ";
         return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
-
-
 }
