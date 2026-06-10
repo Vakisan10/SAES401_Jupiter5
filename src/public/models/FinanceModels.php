@@ -53,7 +53,7 @@ class FinanceModels {
 
     public function validerDevis($id) {
 
-        // 1️⃣ Récupérer le devis + département
+        // Récupérer le devis + département
         $sql = "
             SELECT d.montant_estime, u.departement_id
             FROM devis d
@@ -68,12 +68,12 @@ class FinanceModels {
             return;
         }
 
-        // 2️⃣ Mettre à jour le statut du devis
+        // Mettre à jour le statut du devis
         $sql = "UPDATE devis SET statut = 'valide_finance' WHERE id_devis = ?";
         $req = $this->db->prepare($sql);
         $req->execute([$id]);
 
-        // 3️⃣ Mettre à jour le budget du département
+        // Mettre à jour le budget du département
         $sql = "
             UPDATE departement
             SET budget_utilise = budget_utilise + ?
@@ -177,6 +177,17 @@ class FinanceModels {
         return $req->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getDevisEnRetard(): array
+    {
+        $sql = "
+            SELECT b.*,
+                DATEDIFF(CURDATE(), b.date_estimee_livraison) AS jours_retard
+            FROM bon_commande b
+            WHERE b.date_estimee_livraison < CURDATE()
+              AND b.statut NOT IN ('livre', 'annule')
+            ORDER BY jours_retard DESC
+        ";
+        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-    
 }
