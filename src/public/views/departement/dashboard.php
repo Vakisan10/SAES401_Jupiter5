@@ -33,7 +33,38 @@
 
 <main class="contenu">
 
-    <div class="page-header">
+    <div class="page-header" style="position:relative;">
+
+        <!-- WIDGET NOTIFICATIONS -->
+        <div style="position:absolute; top:0; right:0;">
+            <div style="position:relative; display:inline-block;">
+                <span style="font-size:26px; cursor:pointer;" onclick="document.getElementById('notif-panel').style.display = document.getElementById('notif-panel').style.display === 'none' ? 'block' : 'none'">
+                    🔔
+                    <?php if ($notifCount > 0): ?>
+                        <span style="position:absolute; top:-6px; right:-10px; background:#e74c3c; color:white; border-radius:50%; font-size:12px; width:20px; height:20px; display:flex; align-items:center; justify-content:center;">
+                            <?= $notifCount ?>
+                        </span>
+                    <?php endif; ?>
+                </span>
+                <div id="notif-panel" style="display:none; position:absolute; right:0; top:36px; width:320px; background:white; border:1px solid #ddd; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15); z-index:999;">
+                    <div style="padding:12px 16px; font-weight:bold; border-bottom:1px solid #eee;">Notifications</div>
+                    <?php if (empty($notifications)): ?>
+                        <div style="padding:16px; color:#888; text-align:center;">Aucune notification</div>
+                    <?php else: ?>
+                        <?php foreach ($notifications as $notif): ?>
+                            <div style="padding:12px 16px; border-bottom:1px solid #f5f5f5; font-size:14px; <?= $notif['lu'] == 0 ? 'background:#f0f6ff;' : '' ?>">
+                                <?= htmlspecialchars($notif['message']) ?>
+                                <div style="font-size:11px; color:#aaa; margin-top:4px;">
+                                    <?= date('d/m/Y H:i', strtotime($notif['date_creation'])) ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <!-- FIN WIDGET -->
+
         <div class="page-header-info">
             <h1 class="page-title">Tableau de bord</h1>
             <p class="page-subtitle">Gerez vos devis, commandes et colis</p>

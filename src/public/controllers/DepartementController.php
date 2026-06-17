@@ -42,6 +42,12 @@ class DepartementController {
         }
 
         $colis = $this->model->getDerniersColis($departement_id);
+
+        $notifService = new NotificationService();
+        $userId = $this->getUserId();
+        $notifications = $notifService->getNotificationsNonLues($userId);
+        $notifCount = $notifService->countNonLues($userId);
+
         require __DIR__ . "/../views/departement/dashboard.php";
     }
 
