@@ -203,4 +203,32 @@ class FinanceModels {
         return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getPdfDevis(int $id): array|false
+    {
+        $sql = "SELECT fichier_pdf FROM devis WHERE id_devis = ?";
+        $req = $this->db->prepare($sql);
+        $req->execute([$id]);
+        return $req->fetch(PDO::FETCH_ASSOC);
+    }
+ 
+    // Mettre à jour getDevisAVerifier() pour inclure fichier_pdf :
+    public function getDevisAVerifier() {
+        $sql = "
+            SELECT
+                d.id_devis,
+                d.objet,
+                d.montant_estime,
+                d.date_demande,
+                d.fichier_pdf,
+                dep.nom AS departement
+            FROM devis d
+            LEFT JOIN utilisateur u   ON d.createur_id    = u.id_utilisateur
+            LEFT JOIN departement dep ON u.departement_id = dep.id_departement
+            WHERE d.statut = 'en_attente'
+            ORDER BY d.date_demande DESC
+        ";
+        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
 }
