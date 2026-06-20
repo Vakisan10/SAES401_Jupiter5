@@ -70,4 +70,31 @@ class FinanceController {
         $pdfGenerator = new PdfGenerator();
         $pdfGenerator->genererDevis($devis);
     }
+
+
+        public function streamPdfDevis() {
+        if (!isset($_GET["id"])) {
+            http_response_code(400);
+            die("ID devis manquant");
+        }
+ 
+        $id  = intval($_GET["id"]);
+        $row = $this->model->getPdfDevis($id);
+ 
+        if (!$row || empty($row["fichier_pdf"])) {
+            http_response_code(404);
+            die("PDF introuvable pour ce devis");
+        }
+ 
+        // Stream du PDF avec les bons headers
+        header("Content-Type: application/pdf");
+        header("Content-Disposition: inline; filename=\"devis-" . $id . ".pdf\"");
+        header("Content-Length: " . strlen($row["fichier_pdf"]));
+        header("Cache-Control: private, max-age=0, must-revalidate");
+ 
+        echo $row["fichier_pdf"];
+        exit;
+    }
+ 
+
 }
