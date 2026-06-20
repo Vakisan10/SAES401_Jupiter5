@@ -126,6 +126,57 @@
         </div>
     </div>
 
+    <!-- ============================================================
+         SECTION : Commandes en retard
+         $commandesEnRetard est fourni par le contrôleur via
+         $data["commandesEnRetard"] = $devisModel->getDevisEnRetard();
+         ============================================================ -->
+    <div class="section">
+        <div class="section-header">
+            <h2 class="section-title">&#9888; Commandes en retard</h2>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>N° Commande</th>
+                        <th>Departement</th>
+                        <th>Fournisseur</th>
+                        <th>Date estimee</th>
+                        <th>Jours de retard</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($commandesEnRetard)): ?>
+                        <tr>
+                            <td colspan="5" class="empty-state">Aucune commande en retard</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($commandesEnRetard as $cmd): ?>
+                            <?php $jours = (int) $cmd["jours_retard"]; ?>
+                            <tr>
+                                <td><strong>#<?= htmlspecialchars($cmd["numero_commande"]) ?></strong></td>
+                                <td><?= htmlspecialchars($cmd["departement"]) ?></td>
+                                <td><?= htmlspecialchars($cmd["fournisseur"]) ?></td>
+                                <td><?= htmlspecialchars($cmd["date_estimee"]) ?></td>
+                                <td>
+                                    <span style="
+                                        font-weight: <?= $jours > 7 ? 'bold' : '500' ?>;
+                                        color: <?= $jours > 7 ? '#c0392b' : '#e67e22' ?>;
+                                    ">
+                                        <?= $jours ?> jour<?= $jours > 1 ? 's' : '' ?>
+                                    </span>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- FIN section commandes en retard -->
+
 </main>
 
 </body>

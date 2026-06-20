@@ -177,12 +177,25 @@ class FinanceModels {
         return $req->fetch(PDO::FETCH_ASSOC);
     }
 
+    // ----------------------------------------------------------------
+    // Retourne les bons de commande dont la date de livraison estimée
+    // est dépassée et qui ne sont ni livrés ni annulés.
+    // Colonnes exposées à la vue :
+    //   numero_commande | departement | fournisseur
+    //   date_estimee    | jours_retard
+    // ----------------------------------------------------------------
     public function getDevisEnRetard(): array
     {
         $sql = "
-            SELECT b.*,
-                DATEDIFF(CURDATE(), b.date_estimee_livraison) AS jours_retard
+            SELECT
+                b.numero_commande,
+                dep.nom                                          AS departement,
+                f.nom                                            AS fournisseur,
+                b.date_estimee_livraison                         AS date_estimee,
+                DATEDIFF(CURDATE(), b.date_estimee_livraison)    AS jours_retard
             FROM bon_commande b
+            LEFT JOIN departement dep ON b.departement_id  = dep.id_departement
+            LEFT JOIN fournisseur  f  ON b.fournisseur_id  = f.id_fournisseur
             WHERE b.date_estimee_livraison < CURDATE()
               AND b.statut NOT IN ('livre', 'annule')
             ORDER BY jours_retard DESC
