@@ -10,28 +10,24 @@ class FinanceController {
     }
 
     public function dashboard() {
-
         $stats = [
             "devis_attente" => $this->model->countDevisEnAttente(),
             "bons_commande" => $this->model->countBonCommande()
         ];
-
-        $budgets = $this->model->getBudgetsDepartements();
-        $devis   = $this->model->getDevisEnAttente();
-        $bons    = $this->model->getBonsCommandeRecents();
+        $budgets              = $this->model->getBudgetsDepartements();
+        $devis                = $this->model->getDevisEnAttente();
+        $bons                 = $this->model->getBonsCommandeRecents();
+        $commandesEnRetard    = $this->model->getDevisEnRetard();   // ← AJOUT
 
         require __DIR__ . "/../views/finance/dashboard.php";
     }
-
 
     public function validerDevis() {
         if (!isset($_GET["id"])) {
             die("ID devis manquant");
         }
-
         $id = intval($_GET["id"]);
         $this->model->validerDevis($id);
-
         header("Location: /finance/dashboard");
         exit;
     }
@@ -40,31 +36,24 @@ class FinanceController {
         if (!isset($_GET["id"])) {
             die("ID devis manquant");
         }
-
         $id = intval($_GET["id"]);
         $this->model->rejeterDevis($id);
-
         header("Location: /finance/dashboard");
         exit;
     }
 
-
     public function devisAVerifier() {
-
         $devis = $this->model->getDevisAVerifier();
-
         require __DIR__ . '/../views/finance/devis-a-verifier.php';
     }
 
-     public function bonsCommande() {
+    public function bonsCommande() {
         $bons = $this->model->getTousLesBonsCommande();
         require __DIR__ . '/../views/finance/bons-commande.php';
     }
 
     public function budgets() {
-
         $budgets = $this->model->getBudgetDepartements();
-
         require __DIR__ . "/../views/finance/budgets.php";
     }
 
@@ -72,22 +61,13 @@ class FinanceController {
         if (!isset($_GET['id'])) {
             die("ID devis manquant");
         }
-
         $id = intval($_GET['id']);
         $devis = $this->model->getDevisComplet($id);
-
         if (!$devis) {
             die("Devis introuvable");
         }
-
         require_once __DIR__ . '/../services/PdfGenerator.php';
         $pdfGenerator = new PdfGenerator();
         $pdfGenerator->genererDevis($devis);
     }
-
-
-
-
-
-
 }
