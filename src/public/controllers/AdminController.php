@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../models/AdminModels.php';
+require_once __DIR__ . '/../views/partials/flash.php';
 
 class AdminController {
 
@@ -159,6 +160,9 @@ class AdminController {
         $colis = $this->model->getTousLesColisAdmin($search);
 
         require __DIR__ . '/../views/admin/colis.php';
+    }
+
+    public function setFlash(){
     }
 
     

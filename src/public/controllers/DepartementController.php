@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . "/../models/DepartementModels.php";
+require_once __DIR__ . '/../views/partials/flash.php';
 
 class DepartementController {
 
@@ -119,4 +120,5 @@ class DepartementController {
         $fournisseurs = $this->model->getFournisseursAutorises();
         require __DIR__ . "/../views/departement/fournisseurs.php";
     }
+
 }

@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . "/../models/DirecteurModels.php";
+require_once __DIR__ . '/../views/partials/flash.php';
 
 class DirecteurController {
 
@@ -87,4 +88,5 @@ class DirecteurController {
         $pdfGenerator = new PdfGenerator();
         $pdfGenerator->genererDevis($devis);
     }
+
 }

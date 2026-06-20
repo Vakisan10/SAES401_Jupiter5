@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . "/../models/FinanceModels.php";
+require_once __DIR__ . '/../views/partials/flash.php';
 
 class FinanceController {
 
@@ -84,10 +85,5 @@ class FinanceController {
         $pdfGenerator = new PdfGenerator();
         $pdfGenerator->genererDevis($devis);
     }
-
-
-
-
-
 
 }

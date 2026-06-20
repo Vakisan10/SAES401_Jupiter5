@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../models/PostalUnivModels.php';
+require_once __DIR__ . '/../views/partials/flash.php';
 
 class PostalUnivController {
 
@@ -78,10 +79,5 @@ class PostalUnivController {
 
         require __DIR__ . '/../views/postal-univ/historique.php';
     }
-
-
-
-
-
 
 }
