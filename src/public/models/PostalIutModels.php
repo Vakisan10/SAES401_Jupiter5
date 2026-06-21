@@ -167,7 +167,7 @@ class PostalIutModels {
 
     /* ===== RECHERCHE ===== */
 
-    public function rechercherColis($motcle) {
+   public function rechercherColis($motcle) {
 
     $motcle = "%" . $motcle . "%";
 
@@ -193,6 +193,8 @@ class PostalIutModels {
             c.numero_suivi LIKE ?
             OR b.numero_commande LIKE ?
             OR u.fullName LIKE ?
+            OR d.nom LIKE ?
+            OR CAST(c.id_colis AS CHAR) LIKE ?
         ORDER BY c.date_reception DESC
     ";
 
@@ -200,12 +202,13 @@ class PostalIutModels {
     $req->execute([
         $motcle,
         $motcle,
+        $motcle,
+        $motcle,
         $motcle
     ]);
 
     return $req->fetchAll(PDO::FETCH_ASSOC);
 }
-
 
     /* ===== ACTIONS ===== */
 
