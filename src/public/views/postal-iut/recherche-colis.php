@@ -35,7 +35,7 @@
     <div class="page-header">
         <div class="page-header-info">
             <h1 class="page-title">Recherche de colis</h1>
-            <p class="page-subtitle">Trouvez un colis par numero de suivi, BC, departement ou ID</p>
+            <p class="page-subtitle">Trouvez un colis par numero de suivi, bon de commande ou destinataire</p>
         </div>
     </div>
 
@@ -43,7 +43,13 @@
         <form method="get" style="display: flex; gap: 12px; flex-wrap: wrap;">
             <div class="search-container" style="flex: 1; min-width: 300px; margin-bottom: 0;">
                 <span class="search-icon-text">&#128269;</span>
-                <input type="text" name="q" class="search-input" placeholder="N° suivi, BC, departement, ID colis..." value="<?= htmlspecialchars($_GET["q"] ?? "") ?>">
+                <input 
+                    type="text" 
+                    name="q" 
+                    class="search-input" 
+                    placeholder="N° suivi, bon de commande, destinataire..." 
+                    value="<?= htmlspecialchars($_GET["q"] ?? "") ?>"
+                >
             </div>
             <button type="submit" class="btn btn-primary">Rechercher</button>
         </form>
@@ -53,6 +59,7 @@
         <div class="section-header">
             <h2 class="section-title">Resultats</h2>
         </div>
+
         <div class="table-container">
             <table class="data-table">
                 <thead>
@@ -61,27 +68,36 @@
                         <th>N° suivi</th>
                         <th>Bon de commande</th>
                         <th>Departement</th>
+                        <th>Destinataire</th>
                         <th>Date reception</th>
                         <th>Statut</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     <?php if (empty($resultats)): ?>
                         <tr>
-                            <td colspan="6" class="empty-state">Aucun resultat</td>
+                            <td colspan="7" class="empty-state">Aucun resultat</td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($resultats as $c): ?>
-                        <tr>
-                            <td>
-                                <a href="/postal/colis/details?id=<?= $c["id_colis"] ?>" class="btn-link">#<?= $c["id_colis"] ?></a>
-                            </td>
-                            <td><?= htmlspecialchars($c["numero_suivi"]) ?></td>
-                            <td><?= htmlspecialchars($c["numero_commande"] ?: "—") ?></td>
-                            <td><?= htmlspecialchars($c["departement"] ?: "—") ?></td>
-                            <td><?= $c["date_reception"] ?></td>
-                            <td><span class="badge badge-<?= strtolower(str_replace(' ', '_', $c["statut"])) ?>"><?= $c["statut"] ?></span></td>
-                        </tr>
+                            <tr>
+                                <td>
+                                    <a href="/postal/colis/details?id=<?= $c["id_colis"] ?>" class="btn-link">
+                                        #<?= $c["id_colis"] ?>
+                                    </a>
+                                </td>
+                                <td><?= htmlspecialchars($c["numero_suivi"] ?: "—") ?></td>
+                                <td><?= htmlspecialchars($c["numero_commande"] ?: "—") ?></td>
+                                <td><?= htmlspecialchars($c["departement"] ?: "—") ?></td>
+                                <td><?= htmlspecialchars($c["destinataire"] ?: "—") ?></td>
+                                <td><?= htmlspecialchars($c["date_reception"] ?: "—") ?></td>
+                                <td>
+                                    <span class="badge badge-<?= strtolower(str_replace(' ', '_', $c["statut"])) ?>">
+                                        <?= htmlspecialchars($c["statut"]) ?>
+                                    </span>
+                                </td>
+                            </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </tbody>

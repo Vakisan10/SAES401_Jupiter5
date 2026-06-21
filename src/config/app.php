@@ -16,7 +16,7 @@ return [
         'port' => getenv('DB_PORT') ?: '3306',
         'name' => getenv('DB_NAME') ?: 'suivi_colis_sae',
         'user' => getenv('DB_USER') ?: 'root',
-        'password' => getenv('DB_PASSWORD') ?: 'root',
+        'password' => getenv('DB_PASSWORD') ?: '',
         'charset' => 'utf8mb4',
     ],
 

@@ -168,19 +168,44 @@ class PostalIutModels {
     /* ===== RECHERCHE ===== */
 
     public function rechercherColis($motcle) {
-        $motcle = "%" . $motcle . "%";
-        $sql = "SELECT c.id_colis, c.numero_suivi, c.date_reception, s.libelle AS statut,
-                       d.nom AS departement, b.numero_commande
-                FROM colis c
-                LEFT JOIN bon_commande b ON c.bon_commande_id = b.id_bon_commande
-                LEFT JOIN departement d ON b.departement_id = d.id_departement
-                JOIN statut_colis s ON c.statut_id = s.id_statut
-                WHERE c.numero_suivi LIKE ? OR b.numero_commande LIKE ? OR d.nom LIKE ? OR c.id_colis LIKE ?
-                ORDER BY c.date_reception DESC";
-        $req = $this->db->prepare($sql);
-        $req->execute([$motcle, $motcle, $motcle, $motcle]);
-        return $req->fetchAll(PDO::FETCH_ASSOC);
-    }
+
+    $motcle = "%" . $motcle . "%";
+
+    $sql = "
+        SELECT
+            c.id_colis,
+            c.numero_suivi,
+            c.date_reception,
+            s.libelle AS statut,
+            d.nom AS departement,
+            b.numero_commande,
+            u.fullName AS destinataire
+        FROM colis c
+        LEFT JOIN bon_commande b
+            ON c.bon_commande_id = b.id_bon_commande
+        LEFT JOIN departement d
+            ON b.departement_id = d.id_departement
+        LEFT JOIN utilisateur u
+            ON c.destinataire_id = u.id_utilisateur
+        JOIN statut_colis s
+            ON c.statut_id = s.id_statut
+        WHERE
+            c.numero_suivi LIKE ?
+            OR b.numero_commande LIKE ?
+            OR u.fullName LIKE ?
+        ORDER BY c.date_reception DESC
+    ";
+
+    $req = $this->db->prepare($sql);
+    $req->execute([
+        $motcle,
+        $motcle,
+        $motcle
+    ]);
+
+    return $req->fetchAll(PDO::FETCH_ASSOC);
+}
+
 
     /* ===== ACTIONS ===== */
 

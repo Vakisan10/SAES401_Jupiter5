@@ -168,4 +168,27 @@ class PostalUnivModels {
         return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
+
+    public function getInfosParNumeroCommande($numero) {
+    $sql = "
+        SELECT
+            b.id_bon_commande,
+            b.numero_commande,
+            d.nom AS departement,
+            u.id_utilisateur AS destinataire_id,
+            u.fullName AS destinataire
+        FROM bon_commande b
+        LEFT JOIN departement d ON b.departement_id = d.id_departement
+        LEFT JOIN utilisateur u ON b.createur_id = u.id_utilisateur
+        WHERE b.numero_commande = ?
+    ";
+
+    $req = $this->db->prepare($sql);
+    $req->execute([$numero]);
+
+    return $req->fetch(PDO::FETCH_ASSOC);
+}
+
+
+
 }

@@ -49,8 +49,19 @@
 
                 <div class="form-group">
                     <label class="form-label">Numero de bon de commande</label>
-                    <input type="text" name="numero_commande" class="form-input" required>
+                    <input type="text" id="numero_commande" name="numero_commande" class="form-input" required>
                 </div>
+
+                <div class="form-group">
+                    <label class="form-label">Departement</label>
+                    <input type="text" id="departement" class="form-input" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Destinataire</label>
+                    <input type="text" id="destinataire" class="form-input" readonly>
+                </div>
+
 
                 <div class="form-group">
                     <label class="form-label">Photo de l'etiquette (optionnel)</label>
@@ -69,6 +80,33 @@
     </div>
 
 </main>
+
+<script>
+document.getElementById('numero_commande').addEventListener('input', async function() {
+    const numero = this.value.trim();
+
+    if (numero.length < 2) {
+        document.getElementById('departement').value = '';
+        document.getElementById('destinataire').value = '';
+        return;
+    }
+
+    try {
+        const response = await fetch('/postal-univ/lookup?bc=' + encodeURIComponent(numero));
+        const result = await response.json();
+
+        if (result.success) {
+            document.getElementById('departement').value = result.data.departement;
+            document.getElementById('destinataire').value = result.data.destinataire;
+        } else {
+            document.getElementById('departement').value = '';
+            document.getElementById('destinataire').value = '';
+        }
+    } catch (e) {
+        console.log(e);
+    }
+});
+</script>
 
 </body>
 </html>

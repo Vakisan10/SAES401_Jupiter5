@@ -92,23 +92,6 @@ class FinanceModels {
         $req->execute([$id]);
     }
 
-    public function getDevisAVerifier() {
-        $sql = "
-            SELECT 
-                d.id_devis,
-                d.objet,
-                d.montant_estime,
-                d.date_demande,
-                dep.nom AS departement
-            FROM devis d
-            LEFT JOIN utilisateur u ON d.createur_id = u.id_utilisateur
-            LEFT JOIN departement dep ON u.departement_id = dep.id_departement
-            WHERE d.statut = 'en_attente'
-            ORDER BY d.date_demande DESC
-        ";
-        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-    }
-
 
     public function getTousLesBonsCommande() {
         $sql = "

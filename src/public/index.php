@@ -145,6 +145,7 @@ $router->get('/postal-univ', 'PostalUnivController', 'dashboard');
 $router->get('/postal-univ/dashboard', 'PostalUnivController', 'dashboard');
 $router->get('/postal-univ/reception', 'PostalUnivController', 'receptionColis');
 $router->post('/postal-univ/reception', 'PostalUnivController', 'receptionColis');
+$router->get('/postal-univ/lookup', 'PostalUnivController', 'lookup');
 $router->get('/postal-univ/colis', 'PostalUnivController', 'listeColis');
 $router->get('/postal-univ/transferer', 'PostalUnivController', 'transfererColis');
 $router->get('/postal-univ/non-identifies', 'PostalUnivController', 'nonIdentifies');

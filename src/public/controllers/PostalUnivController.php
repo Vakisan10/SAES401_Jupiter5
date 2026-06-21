@@ -80,8 +80,33 @@ class PostalUnivController {
     }
 
 
+    public function lookup() {
+    header('Content-Type: application/json');
 
+    $numero = $_GET['bc'] ?? '';
 
+    if ($numero === '') {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Numéro vide'
+        ]);
+        return;
+    }
+
+    $infos = $this->model->getInfosParNumeroCommande($numero);
+
+    if ($infos) {
+        echo json_encode([
+            'success' => true,
+            'data' => $infos
+        ]);
+    } else {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Bon de commande introuvable'
+        ]);
+    }
+}
 
 
 }
