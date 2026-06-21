@@ -1,20 +1,23 @@
 <?php
 require_once __DIR__ . '/../models/PostalUnivModels.php';
 
-class PostalUnivController {
+class PostalUnivController
+{
 
     private $model;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->model = new PostalUnivModels();
     }
 
-    public function dashboard() {
+    public function dashboard()
+    {
 
         $stats = [
-            "recus"          => $this->model->getColisRecus(),
-            "a_transferer"   => $this->model->getColisATransferer(),
-            "transferes"    => $this->model->getColisTransferes(),
+            "recus" => $this->model->getColisRecus(),
+            "a_transferer" => $this->model->getColisATransferer(),
+            "transferes" => $this->model->getColisTransferes(),
             "non_identifies" => $this->model->getColisNonIdentifies()
         ];
 
@@ -24,14 +27,15 @@ class PostalUnivController {
     }
 
 
-    public function receptionColis() {
+    public function receptionColis()
+    {
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             $this->model->ajouterColisUniversite([
                 "numero_commande" => $_POST["numero_commande"],
-                "numero_suivi"    => $_POST["numero_suivi"],
-                "commentaire"     => $_POST["commentaire"] ?? null
+                "numero_suivi" => $_POST["numero_suivi"],
+                "commentaire" => $_POST["commentaire"] ?? null
             ]);
 
             header("Location: /postal-univ/reception?ok=1");
@@ -42,7 +46,8 @@ class PostalUnivController {
     }
 
 
-    public function listeColis() {
+    public function listeColis()
+    {
 
         $colis = $this->model->getTousLesColis();
 
@@ -50,7 +55,8 @@ class PostalUnivController {
     }
 
 
-    public function transfererColis() {
+    public function transfererColis()
+    {
 
         if (!isset($_GET["id"])) {
             die("ID colis manquant");
@@ -64,7 +70,8 @@ class PostalUnivController {
         exit;
     }
 
-    public function nonIdentifies() {
+    public function nonIdentifies()
+    {
 
         $colis = $this->model->getColisNonIdentifiesListe();
 
@@ -72,7 +79,8 @@ class PostalUnivController {
     }
 
 
-    public function historique() {
+    public function historique()
+    {
 
         $historique = $this->model->getHistorique();
 
@@ -80,33 +88,65 @@ class PostalUnivController {
     }
 
 
-    public function lookup() {
-    header('Content-Type: application/json');
+    public function lookup()
+    {
+        header('Content-Type: application/json');
 
-    $numero = $_GET['bc'] ?? '';
+        $numero = $_GET['bc'] ?? '';
 
-    if ($numero === '') {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Numéro vide'
-        ]);
-        return;
+        if ($numero === '') {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Numéro vide'
+            ]);
+            return;
+        }
+
+        $infos = $this->model->getInfosParNumeroCommande($numero);
+
+        if ($infos) {
+            echo json_encode([
+                'success' => true,
+                'data' => $infos
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Bon de commande introuvable'
+            ]);
+        }
     }
 
-    $infos = $this->model->getInfosParNumeroCommande($numero);
+    public function assignerNonIdentifie()
+    {
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+            die("Accès invalide");
+        }
 
-    if ($infos) {
-        echo json_encode([
-            'success' => true,
-            'data' => $infos
-        ]);
-    } else {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Bon de commande introuvable'
-        ]);
+        $id_colis = intval($_POST["id_colis"]);
+        $numero_commande = trim($_POST["numero_commande"]);
+
+        $infos = $this->model->getInfosParNumeroCommande($numero_commande);
+
+        if (!$infos) {
+            header("Location: /postal-univ/non-identifies?erreur=bc");
+            exit;
+        }
+
+        $this->model->assignerColisAvecBonCommande(
+            $id_colis,
+            $infos["id_bon_commande"],
+            $infos["destinataire_id"]
+        );
+
+        $this->model->ajouterHistoriqueAssignation(
+            $id_colis,
+            $infos["numero_commande"]
+        );
+
+        header("Location: /postal-univ/non-identifies?ok=1");
+        exit;
     }
-}
 
 
 }

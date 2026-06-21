@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,65 +10,111 @@
 
 <body class="tableau-bord">
 
-<aside class="barre-laterale">
-    <div class="entete-barre">
-        <img src="/assets/img/logo-iutv.png" class="logo" alt="Logo IUT">
-        <h2>Postal Universite</h2>
-        <p>Gestion des colis</p>
-    </div>
-
-    <nav class="menu">
-        <a href="/postal-univ/dashboard">Tableau de bord</a>
-        <a href="/postal-univ/reception">Reception colis</a>
-        <a href="/postal-univ/colis">Liste colis</a>
-        <a class="actif" href="/postal-univ/non-identifies">Non identifies</a>
-        <a href="/postal-univ/historique">Historique</a>
-    </nav>
-
-    <div class="deconnexion">
-        <a href="/logout">Deconnexion</a>
-    </div>
-</aside>
-
-<main class="contenu">
-
-    <div class="page-header">
-        <div class="page-header-info">
-            <h1 class="page-title">Colis non identifies</h1>
-            <p class="page-subtitle">Colis sans correspondance ou information incomplete</p>
+    <aside class="barre-laterale">
+        <div class="entete-barre">
+            <img src="/assets/img/logo-iutv.png" class="logo" alt="Logo IUT">
+            <h2>Postal Universite</h2>
+            <p>Gestion des colis</p>
         </div>
-    </div>
 
-    <div class="section">
-        <div class="table-container">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>N° suivi</th>
-                        <th>Date reception</th>
-                        <th>Statut</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (empty($colis)): ?>
-                        <tr><td colspan="4" class="empty-state">Aucun colis non identifie</td></tr>
-                    <?php else: ?>
-                        <?php foreach ($colis as $c): ?>
+        <nav class="menu">
+            <a href="/postal-univ/dashboard">Tableau de bord</a>
+            <a href="/postal-univ/reception">Reception colis</a>
+            <a href="/postal-univ/colis">Liste colis</a>
+            <a class="actif" href="/postal-univ/non-identifies">Non identifies</a>
+            <a href="/postal-univ/historique">Historique</a>
+        </nav>
+
+        <div class="deconnexion">
+            <a href="/logout">Deconnexion</a>
+        </div>
+    </aside>
+
+    <main class="contenu">
+
+        <div class="page-header">
+            <div class="page-header-info">
+                <h1 class="page-title">Colis non identifies</h1>
+                <p class="page-subtitle">Colis sans correspondance ou information incomplete</p>
+            </div>
+        </div>
+
+        <?php if (isset($_GET["ok"])): ?>
+            <div class="alert alert-success">
+                Colis identifié et assigné avec succès.
+            </div>
+        <?php endif; ?>
+
+        <?php if (isset($_GET["erreur"])): ?>
+            <div class="alert alert-error">
+                Bon de commande introuvable.
+            </div>
+        <?php endif; ?>
+
+        <div class="section">
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
                         <tr>
-                            <td>#<?= $c["id_colis"] ?></td>
-                            <td><strong><?= htmlspecialchars($c["numero_suivi"] ?: "—") ?></strong></td>
-                            <td><?= $c["date_reception"] ?></td>
-                            <td><span class="badge badge-non_identifie"><?= htmlspecialchars($c["statut"]) ?></span></td>
+                            <th>ID</th>
+                            <th>N° suivi</th>
+                            <th>Date reception</th>
+                            <th>Statut</th>
+                            <th>Bon de commande</th>
+                            <th>Action</th>
                         </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
+                    </thead>
 
-</main>
+                    <tbody>
+                        <?php if (empty($colis)): ?>
+                            <tr>
+                                <td colspan="6" class="empty-state">
+                                    Aucun colis non identifie
+                                </td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($colis as $c): ?>
+                                <tr>
+                                    <td>#<?= $c["id_colis"] ?></td>
+
+                                    <td>
+                                        <strong><?= htmlspecialchars($c["numero_suivi"] ?: "—") ?></strong>
+                                    </td>
+
+                                    <td><?= htmlspecialchars($c["date_reception"] ?: "—") ?></td>
+
+                                    <td>
+                                        <span class="badge badge-non_identifie">
+                                            <?= htmlspecialchars($c["statut"]) ?>
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <form method="POST" action="/postal-univ/assigner-non-identifie"
+                                            style="display: flex; gap: 8px;">
+                                            <input type="hidden" name="id_colis" value="<?= $c["id_colis"] ?>">
+
+                                            <input type="text" name="numero_commande" class="form-input"
+                                                placeholder="BC-2026-001" required>
+                                    </td>
+
+                                    <td>
+                                        <button type="submit" class="btn btn-primary">
+                                            Assigner
+                                        </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+
+    </main>
 
 </body>
+
 </html>

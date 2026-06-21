@@ -1,35 +1,42 @@
 <?php
 require_once __DIR__ . '/Model.php';
 
-class PostalUnivModels {
+class PostalUnivModels
+{
 
     private $db;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = Model::getModel()->bd;
     }
 
-    public function getColisRecus() {
+    public function getColisRecus()
+    {
         return $this->db->query("SELECT COUNT(*) FROM colis")
             ->fetchColumn();
     }
 
-    public function getColisATransferer() {
+    public function getColisATransferer()
+    {
         return $this->db->query("SELECT COUNT(*) FROM colis WHERE statut_id = 1")
             ->fetchColumn();
     }
 
-    public function getColisTransferes() {
+    public function getColisTransferes()
+    {
         return $this->db->query("SELECT COUNT(*) FROM colis WHERE statut_id = 2")
             ->fetchColumn();
     }
 
-    public function getColisNonIdentifies() {
+    public function getColisNonIdentifies()
+    {
         return $this->db->query("SELECT COUNT(*) FROM colis WHERE statut_id = 4")
             ->fetchColumn();
     }
 
-    public function getDerniersColis() {
+    public function getDerniersColis()
+    {
         return $this->db->query("
             SELECT
                 c.id_colis,
@@ -44,7 +51,8 @@ class PostalUnivModels {
     }
 
 
-    public function ajouterColisUniversite($data) {
+    public function ajouterColisUniversite($data)
+    {
 
         // 1️⃣ Trouver le bon de commande
         $req = $this->db->prepare("
@@ -96,7 +104,8 @@ class PostalUnivModels {
     }
 
 
-    public function getTousLesColis() {
+    public function getTousLesColis()
+    {
         $sql = "
             SELECT
                 c.id_colis,
@@ -117,7 +126,8 @@ class PostalUnivModels {
     }
 
 
-    public function transfererVersIUT($id_colis) {
+    public function transfererVersIUT($id_colis)
+    {
         $sql = "
             UPDATE colis
             SET statut_id = 2
@@ -127,7 +137,8 @@ class PostalUnivModels {
         return $req->execute([$id_colis]);
     }
 
-    public function getColisNonIdentifiesListe() {
+    public function getColisNonIdentifiesListe()
+    {
         $sql = "
             SELECT
                 c.id_colis,
@@ -145,7 +156,8 @@ class PostalUnivModels {
 
 
 
-    public function getHistorique() {
+    public function getHistorique()
+    {
 
         $sql = "
             SELECT
@@ -169,8 +181,9 @@ class PostalUnivModels {
     }
 
 
-    public function getInfosParNumeroCommande($numero) {
-    $sql = "
+    public function getInfosParNumeroCommande($numero)
+    {
+        $sql = "
         SELECT
             b.id_bon_commande,
             b.numero_commande,
@@ -183,11 +196,44 @@ class PostalUnivModels {
         WHERE b.numero_commande = ?
     ";
 
-    $req = $this->db->prepare($sql);
-    $req->execute([$numero]);
+        $req = $this->db->prepare($sql);
+        $req->execute([$numero]);
 
-    return $req->fetch(PDO::FETCH_ASSOC);
-}
+        return $req->fetch(PDO::FETCH_ASSOC);
+    }
+
+
+    public function assignerColisAvecBonCommande($id_colis, $id_bon_commande, $destinataire_id)
+    {
+        $sql = "
+        UPDATE colis
+        SET bon_commande_id = ?,
+            destinataire_id = ?,
+            statut_id = 1
+        WHERE id_colis = ?
+    ";
+
+        $req = $this->db->prepare($sql);
+        return $req->execute([
+            $id_bon_commande,
+            $destinataire_id,
+            $id_colis
+        ]);
+    }
+
+    public function ajouterHistoriqueAssignation($id_colis, $numero_commande)
+    {
+        $sql = "
+        INSERT INTO historique_colis (id_colis, action, date_action, utilisateur)
+        VALUES (?, ?, NOW(), 'postal_univ')
+    ";
+
+        $req = $this->db->prepare($sql);
+        return $req->execute([
+            $id_colis,
+            "Colis identifié avec le bon de commande " . $numero_commande
+        ]);
+    }
 
 
 

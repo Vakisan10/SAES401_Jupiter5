@@ -199,6 +199,7 @@ $router->get('/admin/colis', 'AdminController', 'colis');
 $router->get('/admin/export-colis', 'AdminController', 'exportColis');
 $router->get('/admin/export-devis', 'AdminController', 'exportDevis');
 $router->get('/admin/export-bons-commande', 'AdminController', 'exportBonsCommande');
+$router->post('/postal-univ/assigner-non-identifie', 'PostalUnivController', 'assignerNonIdentifie');
 
 try {
     $method = $_SERVER['REQUEST_METHOD'];
