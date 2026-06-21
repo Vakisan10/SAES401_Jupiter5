@@ -1,6 +1,6 @@
 -- MariaDB sae
 
-CREATE DATABASE sae_colis;
+CREATE DATABASE IF NOT EXISTS sae_colis;
 
 USE sae_colis;
 
