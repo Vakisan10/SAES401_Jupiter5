@@ -94,7 +94,7 @@ if (!in_array($uri, $publicRoutes)) {
 $router = new Router();
 
 // Route racine : redirige vers le dashboard approprié selon le rôle
-$router->get('/', function() use ($currentUser, $config) {
+$router->get('/', function () use ($currentUser, $config) {
     if (!$currentUser) {
         // Redirige vers login (qui gère dev vs prod)
         header('Location: /login');
@@ -197,6 +197,8 @@ $router->get('/admin/devis', 'AdminController', 'devis');
 $router->get('/admin/commandes', 'AdminController', 'commandes');
 $router->get('/admin/colis', 'AdminController', 'colis');
 $router->get('/admin/export-colis', 'AdminController', 'exportColis');
+$router->get('/admin/export-devis', 'AdminController', 'exportDevis');
+$router->get('/admin/export-bons-commande', 'AdminController', 'exportBonsCommande');
 
 try {
     $method = $_SERVER['REQUEST_METHOD'];

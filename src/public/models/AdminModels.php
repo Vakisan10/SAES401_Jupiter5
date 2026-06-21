@@ -1,41 +1,48 @@
 <?php
 require_once __DIR__ . "/Model.php";
 
-class AdminModels {
+class AdminModels
+{
 
     private $db;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = Model::getModel()->bd;
     }
 
 
-    public function countUtilisateurs() {
+    public function countUtilisateurs()
+    {
         return $this->db
             ->query("SELECT COUNT(*) FROM utilisateur")
             ->fetchColumn();
     }
 
-    public function countDevis() {
+    public function countDevis()
+    {
         return $this->db
             ->query("SELECT COUNT(*) FROM devis")
             ->fetchColumn();
     }
 
-    public function countBonsCommande() {
+    public function countBonsCommande()
+    {
         return $this->db
             ->query("SELECT COUNT(*) FROM bon_commande")
             ->fetchColumn();
     }
 
-    public function countColis() {
+    public function countColis()
+    {
         return $this->db
             ->query("SELECT COUNT(*) FROM colis")
             ->fetchColumn();
     }
 
 
-    public function countUtilisateursParRole() {
+    public function countUtilisateursParRole()
+    {
         $sql = "
             SELECT r.libelle, COUNT(u.id_utilisateur) AS total
             FROM role r
@@ -47,7 +54,8 @@ class AdminModels {
 
     /* ===== UTILISATEURS ===== */
 
-    public function getTousLesUtilisateurs() {
+    public function getTousLesUtilisateurs()
+    {
         $sql = "
             SELECT 
                 u.id_utilisateur,
@@ -66,14 +74,16 @@ class AdminModels {
         return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getRoles() {
+    public function getRoles()
+    {
         return $this->db->query("
             SELECT id_role, libelle
             FROM role
         ")->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getDepartements() {
+    public function getDepartements()
+    {
         return $this->db->query("
             SELECT id_departement, nom
             FROM departement
@@ -81,7 +91,8 @@ class AdminModels {
         ")->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function updateUtilisateur($id, $role_id, $departement_id) {
+    public function updateUtilisateur($id, $role_id, $departement_id)
+    {
         $sql = "
             UPDATE utilisateur
             SET role_id = ?, departement_id = ?
@@ -92,7 +103,8 @@ class AdminModels {
     }
 
     // Récupérer tous les fournisseurs
-    public function getFournisseurs() {
+    public function getFournisseurs()
+    {
         return $this->db->query("
             SELECT *
             FROM fournisseur
@@ -101,7 +113,8 @@ class AdminModels {
     }
 
     // Ajouter
-    public function ajouterFournisseur($data) {
+    public function ajouterFournisseur($data)
+    {
         $sql = "
             INSERT INTO fournisseur (nom, contact_nom, contact_email, contact_telephone)
             VALUES (?, ?, ?, ?)
@@ -116,7 +129,8 @@ class AdminModels {
     }
 
     // Modifier
-    public function updateFournisseur($id, $data) {
+    public function updateFournisseur($id, $data)
+    {
         $sql = "
             UPDATE fournisseur
             SET nom = ?, contact_nom = ?, contact_email = ?, contact_telephone = ?
@@ -132,7 +146,8 @@ class AdminModels {
         ]);
     }
 
-    public function getFournisseurById($id) {
+    public function getFournisseurById($id)
+    {
         $req = $this->db->prepare("
             SELECT *
             FROM fournisseur
@@ -144,7 +159,8 @@ class AdminModels {
 
     /* ===== DEPARTEMENTS ===== */
 
-    public function getDepartementsAdmin() {
+    public function getDepartementsAdmin()
+    {
         return $this->db->query("
             SELECT id_departement, nom, budget_total, budget_utilise
             FROM departement
@@ -152,7 +168,8 @@ class AdminModels {
         ")->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function ajouterDepartement($nom, $budget) {
+    public function ajouterDepartement($nom, $budget)
+    {
         $req = $this->db->prepare("
             INSERT INTO departement (nom, budget_total, budget_utilise)
             VALUES (?, ?, 0)
@@ -160,7 +177,8 @@ class AdminModels {
         $req->execute([$nom, $budget]);
     }
 
-    public function getDepartementById($id) {
+    public function getDepartementById($id)
+    {
         $req = $this->db->prepare("
             SELECT *
             FROM departement
@@ -170,7 +188,8 @@ class AdminModels {
         return $req->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function updateDepartement($id, $nom, $budget) {
+    public function updateDepartement($id, $nom, $budget)
+    {
         $req = $this->db->prepare("
             UPDATE departement
             SET nom = ?, budget_total = ?
@@ -179,7 +198,8 @@ class AdminModels {
         $req->execute([$nom, $budget, $id]);
     }
 
-    public function countDevisParStatut() {
+    public function countDevisParStatut()
+    {
         $sql = "
             SELECT statut, COUNT(*) AS total
             FROM devis
@@ -189,7 +209,8 @@ class AdminModels {
     }
 
     // Tous les devis (avec filtres)
-    public function getTousLesDevis($search = null) {
+    public function getTousLesDevis($search = null)
+    {
 
         $sql = "
             SELECT 
@@ -227,7 +248,8 @@ class AdminModels {
     }
 
 
-    public function countCommandesParStatut() {
+    public function countCommandesParStatut()
+    {
         $sql = "
             SELECT statut, COUNT(*) AS total
             FROM bon_commande
@@ -237,7 +259,8 @@ class AdminModels {
     }
 
     // Tous les bons de commande (+ recherche)
-    public function getToutesLesCommandes($search = null) {
+    public function getToutesLesCommandes($search = null)
+    {
 
         $sql = "
             SELECT 
@@ -274,7 +297,8 @@ class AdminModels {
     }
 
 
-    public function countColisParStatut() {
+    public function countColisParStatut()
+    {
         $sql = "
             SELECT s.libelle AS statut, COUNT(*) AS total
             FROM colis c
@@ -285,7 +309,8 @@ class AdminModels {
     }
 
     // Tous les colis + recherche
-    public function getTousLesColisAdmin($search = null) {
+    public function getTousLesColisAdmin($search = null)
+    {
 
         $sql = "
             SELECT
@@ -322,9 +347,48 @@ class AdminModels {
         return $req->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getTousLesDevisExport()
+    {
 
-    
+        $sql = "
+        SELECT
+            d.id_devis,
+            d.objet,
+            d.montant_estime,
+            d.statut,
+            d.date_demande,
+            dep.nom AS departement,
+            f.nom AS fournisseur
+        FROM devis d
+        LEFT JOIN utilisateur u ON d.createur_id = u.id_utilisateur
+        LEFT JOIN departement dep ON u.departement_id = dep.id_departement
+        LEFT JOIN fournisseur f ON d.fournisseur_id = f.id_fournisseur
+        ORDER BY d.date_demande DESC
+    ";
+
+        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getTousLesBonsCommandeExport()
+    {
+
+        $sql = "
+        SELECT
+            b.id_bon_commande,
+            b.numero_commande,
+            b.date_commande,
+            b.montant_estime,
+            b.statut,
+            d.nom AS departement,
+            f.nom AS fournisseur
+        FROM bon_commande b
+        LEFT JOIN departement d ON b.departement_id = d.id_departement
+        LEFT JOIN fournisseur f ON b.fournisseur_id = f.id_fournisseur
+        ORDER BY b.date_commande DESC
+    ";
+
+        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
 
 
-    
 }

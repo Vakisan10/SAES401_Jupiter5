@@ -1,200 +1,289 @@
-    <?php
-    require_once __DIR__ . '/../models/AdminModels.php';
+<?php
+require_once __DIR__ . '/../models/AdminModels.php';
 
-    class AdminController {
+class AdminController
+{
 
-        private $model;
+    private $model;
 
-        public function __construct() {
-            $this->model = new AdminModels();
+    public function __construct()
+    {
+        $this->model = new AdminModels();
+    }
+
+    public function dashboard()
+    {
+
+        $stats = [
+            "utilisateurs" => $this->model->countUtilisateurs(),
+            "devis" => $this->model->countDevis(),
+            "bons" => $this->model->countBonsCommande(),
+            "colis" => $this->model->countColis()
+        ];
+
+        $roles = $this->model->countUtilisateursParRole();
+
+        require __DIR__ . '/../views/admin/dashboard.php';
+    }
+
+    public function utilisateurs()
+    {
+
+        $utilisateurs = $this->model->getTousLesUtilisateurs();
+        $roles = $this->model->getRoles();
+        $departements = $this->model->getDepartements();
+
+        require __DIR__ . '/../views/admin/utilisateurs.php';
+    }
+
+    public function updateUtilisateur()
+    {
+
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+            die("Accès invalide");
         }
 
-        public function dashboard() {
+        $this->model->updateUtilisateur(
+            $_POST["id_utilisateur"],
+            $_POST["role_id"],
+            $_POST["departement_id"] ?: null
+        );
 
-            $stats = [
-                "utilisateurs" => $this->model->countUtilisateurs(),
-                "devis"        => $this->model->countDevis(),
-                "bons"         => $this->model->countBonsCommande(),
-                "colis"        => $this->model->countColis()
-            ];
+        header("Location: /admin/utilisateurs?ok=1");
+        exit;
+    }
 
-            $roles = $this->model->countUtilisateursParRole();
+    // Liste fournisseurs
+    public function fournisseurs()
+    {
+        $fournisseurs = $this->model->getFournisseurs();
+        require __DIR__ . '/../views/admin/fournisseurs.php';
+    }
 
-            require __DIR__ . '/../views/admin/dashboard.php';
-        }
-
-            public function utilisateurs() {
-
-            $utilisateurs = $this->model->getTousLesUtilisateurs();
-            $roles        = $this->model->getRoles();
-            $departements = $this->model->getDepartements();
-
-            require __DIR__ . '/../views/admin/utilisateurs.php';
-        }
-
-        public function updateUtilisateur() {
-
-            if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-                die("Accès invalide");
-            }
-
-            $this->model->updateUtilisateur(
-                $_POST["id_utilisateur"],
-                $_POST["role_id"],
-                $_POST["departement_id"] ?: null
-            );
-
-            header("Location: /admin/utilisateurs?ok=1");
+    // Ajouter
+    public function ajouterFournisseur()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->model->ajouterFournisseur($_POST);
+            header('Location: /admin/fournisseurs');
             exit;
         }
+    }
 
-        // Liste fournisseurs
-        public function fournisseurs() {
-            $fournisseurs = $this->model->getFournisseurs();
-            require __DIR__ . '/../views/admin/fournisseurs.php';
+    // Modifier
+    public function updateFournisseur()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->model->updateFournisseur(
+                $_POST['id_fournisseur'],
+                $_POST
+            );
+            header('Location: /admin/fournisseurs');
+            exit;
+        }
+    }
+
+    public function modifierFournisseur()
+    {
+
+        if (!isset($_GET['id'])) {
+            die("ID fournisseur manquant");
         }
 
-        // Ajouter
-        public function ajouterFournisseur() {
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $this->model->ajouterFournisseur($_POST);
-                header('Location: /admin/fournisseurs');
-                exit;
-            }
+        $fournisseur = $this->model->getFournisseurById($_GET['id']);
+
+        if (!$fournisseur) {
+            die("Fournisseur introuvable");
         }
 
-        // Modifier
-        public function updateFournisseur() {
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $this->model->updateFournisseur(
-                    $_POST['id_fournisseur'],
-                    $_POST
-                );
-                header('Location: /admin/fournisseurs');
-                exit;
-            }
+        require __DIR__ . '/../views/admin/modifier-fournisseur.php';
+    }
+
+    /* ===== DEPARTEMENTS ===== */
+
+    public function departements()
+    {
+        $departements = $this->model->getDepartementsAdmin();
+        require __DIR__ . '/../views/admin/departements.php';
+    }
+
+    public function ajouterDepartement()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->model->ajouterDepartement(
+                $_POST['nom'],
+                $_POST['budget_total']
+            );
+            header("Location: /admin/departements");
+            exit;
+        }
+    }
+
+    public function modifierDepartement()
+    {
+        if (!isset($_GET['id'])) {
+            die("ID département manquant");
         }
 
-        public function modifierFournisseur() {
+        $departement = $this->model->getDepartementById($_GET['id']);
+        require __DIR__ . '/../views/admin/modifier-departement.php';
+    }
 
-            if (!isset($_GET['id'])) {
-                die("ID fournisseur manquant");
-            }
-
-            $fournisseur = $this->model->getFournisseurById($_GET['id']);
-
-            if (!$fournisseur) {
-                die("Fournisseur introuvable");
-            }
-
-            require __DIR__ . '/../views/admin/modifier-fournisseur.php';
+    public function updateDepartement()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->model->updateDepartement(
+                $_POST['id_departement'],
+                $_POST['nom'],
+                $_POST['budget_total']
+            );
+            header("Location: /admin/departements");
+            exit;
         }
+    }
 
-        /* ===== DEPARTEMENTS ===== */
+    public function devis()
+    {
 
-        public function departements() {
-            $departements = $this->model->getDepartementsAdmin();
-            require __DIR__ . '/../views/admin/departements.php';
-        }
+        $stats = $this->model->countDevisParStatut();
 
-        public function ajouterDepartement() {
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $this->model->ajouterDepartement(
-                    $_POST['nom'],
-                    $_POST['budget_total']
-                );
-                header("Location: /admin/departements");
-                exit;
-            }
-        }
+        $search = $_GET['q'] ?? null;
+        $devis = $this->model->getTousLesDevis($search);
 
-        public function modifierDepartement() {
-            if (!isset($_GET['id'])) {
-                die("ID département manquant");
-            }
+        require __DIR__ . '/../views/admin/devis.php';
+    }
 
-            $departement = $this->model->getDepartementById($_GET['id']);
-            require __DIR__ . '/../views/admin/modifier-departement.php';
-        }
+    public function commandes()
+    {
 
-        public function updateDepartement() {
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $this->model->updateDepartement(
-                    $_POST['id_departement'],
-                    $_POST['nom'],
-                    $_POST['budget_total']
-                );
-                header("Location: /admin/departements");
-                exit;
-            }
-        }
+        $stats = $this->model->countCommandesParStatut();
 
-        public function devis() {
+        $search = $_GET['q'] ?? null;
+        $commandes = $this->model->getToutesLesCommandes($search);
 
-            $stats = $this->model->countDevisParStatut();
+        require __DIR__ . '/../views/admin/commandes.php';
+    }
 
-            $search = $_GET['q'] ?? null;
-            $devis  = $this->model->getTousLesDevis($search);
+    /* ===== COLIS ===== */
 
-            require __DIR__ . '/../views/admin/devis.php';
-        }
+    public function colis()
+    {
 
-        public function commandes() {
+        $stats = $this->model->countColisParStatut();
 
-            $stats = $this->model->countCommandesParStatut();
+        $search = $_GET['q'] ?? null;
+        $colis = $this->model->getTousLesColisAdmin($search);
 
-            $search = $_GET['q'] ?? null;
-            $commandes = $this->model->getToutesLesCommandes($search);
-
-            require __DIR__ . '/../views/admin/commandes.php';
-        }
-
-        /* ===== COLIS ===== */
-
-        public function colis() {
-
-            $stats = $this->model->countColisParStatut();
-
-            $search = $_GET['q'] ?? null;
-            $colis = $this->model->getTousLesColisAdmin($search);
-
-            require __DIR__ . '/../views/admin/colis.php';
-        }
+        require __DIR__ . '/../views/admin/colis.php';
+    }
 
 
-        public function exportColis() {
+    public function exportColis()
+    {
 
-    $colis = $this->model->getTousLesColisAdmin();
+        $colis = $this->model->getTousLesColisAdmin();
 
-    header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename="export_colis.csv"');
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="export_colis.csv"');
 
-    $fichier = fopen('php://output', 'w');
+        $fichier = fopen('php://output', 'w');
 
-    fputcsv($fichier, [
-        'ID',
-        'Numero suivi',
-        'Numero commande',
-        'Departement',
-        'Statut',
-        'Date reception',
-        'Date retrait'
-    ], ';');
-
-    foreach ($colis as $c) {
         fputcsv($fichier, [
-            $c['id_colis'],
-            $c['numero_suivi'],
-            $c['numero_commande'],
-            $c['departement'],
-            $c['statut'],
-            $c['date_reception'],
-            $c['date_retrait']
+            'ID',
+            'Numero suivi',
+            'Numero commande',
+            'Departement',
+            'Statut',
+            'Date reception',
+            'Date retrait'
         ], ';');
+
+        foreach ($colis as $c) {
+            fputcsv($fichier, [
+                $c['id_colis'],
+                $c['numero_suivi'],
+                $c['numero_commande'],
+                $c['departement'],
+                $c['statut'],
+                $c['date_reception'],
+                $c['date_retrait']
+            ], ';');
+        }
+
+        fclose($fichier);
+        exit;
     }
 
-    fclose($fichier);
-    exit;
-}
-      
+    public function exportDevis()
+    {
+
+        $devis = $this->model->getTousLesDevisExport();
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="export_devis.csv"');
+
+        $fichier = fopen('php://output', 'w');
+
+        fputcsv($fichier, [
+            'ID',
+            'Objet',
+            'Montant estime',
+            'Statut',
+            'Date demande',
+            'Departement',
+            'Fournisseur'
+        ], ';');
+
+        foreach ($devis as $d) {
+            fputcsv($fichier, [
+                $d['id_devis'],
+                $d['objet'],
+                $d['montant_estime'],
+                $d['statut'],
+                $d['date_demande'],
+                $d['departement'],
+                $d['fournisseur']
+            ], ';');
+        }
+
+        fclose($fichier);
+        exit;
     }
+
+    public function exportBonsCommande()
+    {
+
+        $commandes = $this->model->getTousLesBonsCommandeExport();
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="export_bons_commande.csv"');
+
+        $fichier = fopen('php://output', 'w');
+
+        fputcsv($fichier, [
+            'ID',
+            'Numero commande',
+            'Date commande',
+            'Montant estime',
+            'Statut',
+            'Departement',
+            'Fournisseur'
+        ], ';');
+
+        foreach ($commandes as $c) {
+            fputcsv($fichier, [
+                $c['id_bon_commande'],
+                $c['numero_commande'],
+                $c['date_commande'],
+                $c['montant_estime'],
+                $c['statut'],
+                $c['departement'],
+                $c['fournisseur']
+            ], ';');
+        }
+
+        fclose($fichier);
+        exit;
+    }
+
+}
