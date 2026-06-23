@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard – Service Financier</title>
     <link rel="stylesheet" href="/assets/css/theme.css">
+    <!-- Librairie pour faire des graphiques, chargée depuis internet -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 </head>
 
 <body class="tableau-bord">
@@ -50,6 +52,49 @@
             <div class="stat-description">Total</div>
         </div>
     </div>
+
+    <!-- Bloc qui contient le graphique du budget par departement -->
+    <div class="section">
+        <div class="section-header">
+            <h2 class="section-title">Budget par departement</h2>
+        </div>
+        <!-- Le canvas est la zone ou le graphique va se dessiner -->
+        <canvas id="graphiqueBudget" style="max-height:350px;"></canvas>
+    </div>
+    <script>
+        // On recupere les donnees envoyees par le controller en PHP
+        // et on les convertit en format JSON pour que JavaScript puisse les lire
+        const budgets = <?= json_encode($budgets) ?>;
+        // On extrait juste les noms des departements pour l'axe horizontal
+        const noms = budgets.map(b => b.nom);
+        // On extrait le budget total de chaque departement
+        const totaux = budgets.map(b => b.budget_total);
+        // On extrait le budget deja utilise de chaque departement
+        const utilises = budgets.map(b => b.budget_utilise);
+
+        // On recupere la zone de dessin (le canvas) et on cree le graphique dedans
+        new Chart(document.getElementById('graphiqueBudget'), {
+            type: 'bar', // barres verticales
+            data: {
+                labels: noms, // les noms des departements en bas
+                datasets: [
+                    {
+                        label: 'Budget total',
+                        data: totaux,
+                        backgroundColor: '#2E6DA4' // bleu
+                    },
+                    {
+                        label: 'Budget utilise',
+                        data: utilises,
+                        backgroundColor: '#E74C3C' // rouge
+                    }
+                ]
+            },
+            options: {
+                responsive: true // le graphique s'adapte a la taille de l'ecran
+            }
+        });
+    </script>
 
     <div class="section">
         <div class="section-header">

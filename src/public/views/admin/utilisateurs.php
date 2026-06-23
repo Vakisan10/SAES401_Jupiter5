@@ -32,6 +32,8 @@
 
 <main class="contenu">
 
+    <?php require __DIR__ . '/../partials/flash.php'; ?>
+
     <div class="page-header">
         <div class="page-header-info">
             <h1 class="page-title">Gestion des utilisateurs</h1>
@@ -49,12 +51,13 @@
                         <th>UID CAS</th>
                         <th>Role</th>
                         <th>Departement</th>
-                        <th>Action</th>
+                        <th>Modifier</th>
+                        <th>Supprimer</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($utilisateurs)): ?>
-                        <tr><td colspan="6" class="empty-state">Aucun utilisateur</td></tr>
+                        <tr><td colspan="7" class="empty-state">Aucun utilisateur</td></tr>
                     <?php else: ?>
                         <?php foreach ($utilisateurs as $u): ?>
                         <tr>
@@ -86,6 +89,18 @@
                                     <button type="submit" class="btn btn-sm btn-primary">Enregistrer</button>
                                 </td>
                             </form>
+                            <td>
+                                <!--
+                                Ce bouton ouvre une popup de confirmation avant de supprimer.
+                                Si l'utilisateur clique sur "Annuler", rien ne se passe.
+                                Si il clique sur "OK", on redirige vers la route de suppression.
+                                -->
+                                <a href="/admin/supprimer-utilisateur?id=<?= $u['id_utilisateur'] ?>"
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');">
+                                    Supprimer
+                                </a>
+                            </td>
                         </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>

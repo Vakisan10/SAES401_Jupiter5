@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tableau de bord – Directeur</title>
     <link rel="stylesheet" href="/assets/css/theme.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 </head>
 
 <body class="tableau-bord">
@@ -49,6 +50,28 @@
             <div class="stat-description">Bons de commande</div>
         </div>
     </div>
+
+    <!-- Bloc graphique en camembert montrant la repartition des devis -->
+    <div class="section">
+        <div class="section-header">
+            <h2 class="section-title">Repartition des devis par statut</h2>
+        </div>
+        <canvas id="graphiqueDevis" style="max-height:350px;"></canvas>
+    </div>
+    <script>
+        // On cree un camembert avec 2 parts : devis en attente et devis signes
+        new Chart(document.getElementById('graphiqueDevis'), {
+            type: 'pie', // camembert
+            data: {
+                labels: ['En attente', 'Signes'],
+                datasets: [{
+                    // Ces 2 valeurs viennent du tableau $stats envoye par le controller
+                    data: [<?= $stats['devis_attente'] ?>, <?= $stats['bc_signes'] ?>],
+                    backgroundColor: ['#F39C12', '#27AE60'] // orange et vert
+                }]
+            }
+        });
+    </script>
 
     <div class="section">
         <div class="section-header">
