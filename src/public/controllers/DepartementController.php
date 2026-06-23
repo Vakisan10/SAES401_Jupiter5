@@ -1,7 +1,5 @@
 <?php
 require_once __DIR__ . "/../models/DepartementModels.php";
-require_once __DIR__ . '/../views/partials/flash.php';
-
 class DepartementController {
 
     private $model;
@@ -102,11 +100,28 @@ class DepartementController {
         $bons = $this->model->getMesBonsCommande($departement_id);
         require __DIR__ . '/../views/departement/mes-bons-commande.php';
     }
-
-    public function mesColis() {
+        public function mesColis() {
         $departement_id = $this->getDepartementId();
         $colis = $this->model->getColisDepartement($departement_id);
         require __DIR__ . '/../views/departement/mes-colis.php';
+
+        require __DIR__ . '/../views/partials/flash.php';
+
+        if (isset($_POST['ajouter'])) {
+    
+        $resultat = $monModele->ajouterQuelqueChose($_POST);
+    
+        if ($resultat === 'succes') {
+            setFlash('success', 'Succès !');
+        } elseif ($resultat === 'erreur_saisie') {
+            setFlash('error', 'Erreur !');
+        } else {
+            setFlash('failure', 'Échec !');
+        }
+    
+        header('Location: /ma-page');
+        exit;
+        }
     }
 
     public function budget() {

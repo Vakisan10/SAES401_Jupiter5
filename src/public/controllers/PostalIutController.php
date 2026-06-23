@@ -142,6 +142,24 @@ class PostalIutController {
         }
 
         require __DIR__ . '/../views/postal-iut/ajouter-colis.php';
+
+        require __DIR__ . '/../views/partials/flash.php';
+
+        if (isset($_POST['ajouter'])) {
+    
+        $resultat = $monModele->ajouterQuelqueChose($_POST);
+    
+        if ($resultat === 'succes') {
+            setFlash('success', 'Succès !');
+        } elseif ($resultat === 'erreur_saisie') {
+            setFlash('error', 'Erreur !');
+        } else {
+            setFlash('failure', 'Échec !');
+        }
+    
+        header('Location: /ma-page');
+        exit;
+        }
     }
 
     public function modifierColis() {
