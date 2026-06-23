@@ -200,6 +200,7 @@ $router->get('/admin/export-colis', 'AdminController', 'exportColis');
 $router->get('/admin/export-devis', 'AdminController', 'exportDevis');
 $router->get('/admin/export-bons-commande', 'AdminController', 'exportBonsCommande');
 $router->post('/postal-univ/assigner-non-identifie', 'PostalUnivController', 'assignerNonIdentifie');
+$router->get('/admin/supprimer-utilisateur', 'AdminController', 'supprimerUtilisateur');
 
 try {
     $method = $_SERVER['REQUEST_METHOD'];
