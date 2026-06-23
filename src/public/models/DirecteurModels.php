@@ -101,20 +101,24 @@ class DirecteurModels {
     }
 
 
+        
     public function getTousLesBonsCommande() {
         $sql = "
-            SELECT 
+            SELECT
                 b.id_bon_commande,
                 b.numero_commande,
-                b.date_commande,
-                d.objet,
-                d.montant_estime
+                b.date_estimee_livraison,
+                b.statut,
+                dep.nom AS departement,
+                f.nom AS fournisseur
             FROM bon_commande b
-            LEFT JOIN devis d ON b.devis_id = d.id_devis
+            LEFT JOIN departement dep ON b.departement_id = dep.id_departement
+            LEFT JOIN fournisseur f ON b.fournisseur_id = f.id_fournisseur
             ORDER BY b.date_commande DESC
         ";
         return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
+
 
     public function getDevisPDF($id) {
         $sql = "SELECT fichier_pdf FROM devis WHERE id_devis = ?";
