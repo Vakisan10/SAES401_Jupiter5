@@ -161,5 +161,42 @@ class AdminController {
 
         require __DIR__ . '/../views/admin/colis.php';
     }
-    
+	public function exportColis() {
+    $colis = $this->model->getTousLesColis();
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename=export-colis.csv');
+    $out = fopen('php://output', 'w');
+    fputcsv($out, ['ID', 'Numéro suivi', 'Statut', 'Date réception', 'Destinataire']);
+    foreach ($colis as $c) {
+        fputcsv($out, [$c['id_colis'], $c['numero_suivi'], $c['statut_libelle'], $c['date_reception'], $c['destinataire_nom'] ?? 'N/A']);
+    }
+    fclose($out);
+    exit;
+}
+
+public function exportDevis() {
+    $devis = $this->model->getTousLesDevis();
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename=export-devis.csv');
+    $out = fopen('php://output', 'w');
+    fputcsv($out, ['ID', 'Objet', 'Montant', 'Statut', 'Date demande', 'Département']);
+    foreach ($devis as $d) {
+        fputcsv($out, [$d['id_devis'], $d['objet'], $d['montant_estime'], $d['statut'], $d['date_demande'], $d['departement'] ?? 'N/A']);
+    }
+    fclose($out);
+    exit;
+}
+
+public function exportBonsCommande() {
+    $bons = $this->model->getTousLesBonsCommande();
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename=export-bons-commande.csv');
+    $out = fopen('php://output', 'w');
+    fputcsv($out, ['ID', 'Numéro commande', 'Montant', 'Statut', 'Date commande', 'Département', 'Fournisseur']);
+    foreach ($bons as $b) {
+        fputcsv($out, [$b['id_bon_commande'], $b['numero_commande'], $b['montant_estime'], $b['statut'], $b['date_commande'], $b['departement'] ?? 'N/A', $b['fournisseur'] ?? 'N/A']);
+    }
+    fclose($out);
+    exit;
+}    
 }
