@@ -81,3 +81,43 @@ class PostalUnivController {
     }
 
 }
+    public function assignerNonIdentifie() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /postal-univ/non-identifies');
+            exit;
+        }
+        $id_colis = intval($_POST['id_colis'] ?? 0);
+        $numero_bc = $_POST['numero_commande'] ?? null;
+
+        if (!$id_colis || !$numero_bc) {
+            header('Location: /postal-univ/non-identifies');
+            exit;
+        }
+
+        $bc = $this->model->getInfosParNumeroCommande($numero_bc);
+
+        if (!$bc) {
+            header('Location: /postal-univ/non-identifies');
+            exit;
+        }
+
+        $this->model->assignerColisBC($id_colis, $bc['id_bon_commande']);
+        header('Location: /postal-univ/non-identifies');
+        exit;
+    }
+
+    public function lookup() {
+        if (!isset($_GET['bc'])) {
+            echo json_encode(['error' => 'Numéro BC manquant']);
+            exit;
+        }
+        $numero = $_GET['bc'];
+        $infos = $this->model->getInfosParNumeroCommande($numero);
+        header('Content-Type: application/json');
+        if ($infos) {
+            echo json_encode(['success' => true, 'data' => $infos]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Introuvable']);
+        }
+        exit;
+    }
