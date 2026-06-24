@@ -68,24 +68,6 @@ class DirecteurController {
         $bons = $this->model->getTousLesBonsCommande();
         require __DIR__ . "/../views/directeur-iut/bons-commande.php";
         // Dans ton Contrôleur (ex: AjouterElementController.php)
-        require_once __DIR__ . '/../views/partials/flash.php';
-
-
-        if (isset($_POST['ajouter'])) {
-    
-        $resultat = $monModele->ajouterQuelqueChose($_POST);
-    
-        if ($resultat === 'succes') {
-            setFlash('success', 'Succès !');
-        } elseif ($resultat === 'erreur_saisie') {
-            setFlash('error', 'Erreur !');
-        } else {
-            setFlash('failure', 'Échec !');
-        }
-    
-        header('Location: /ma-page');
-        exit;
-        }
     }
 
 

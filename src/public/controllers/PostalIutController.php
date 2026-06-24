@@ -134,7 +134,10 @@ class PostalIutController {
                 $ok = $this->model->insertColis($data);
 
                 if ($ok) {
-                    $message = "Colis ajouté avec succès.";
+                    // Modification d'après l'étape 4 : Utilisation du Flash et redirection stricte
+                    setFlash('success', 'Colis ajouté avec succès.'); [cite: 45]
+                    header("Location: /postal-iut/dashboard"); [cite: 45]
+                    exit; [cite: 45]
                 } else {
                     $message = "Erreur lors de l'enregistrement du colis.";
                 }
@@ -142,24 +145,6 @@ class PostalIutController {
         }
 
         require __DIR__ . '/../views/postal-iut/ajouter-colis.php';
-
-        require __DIR__ . '/../views/partials/flash.php';
-
-        if (isset($_POST['ajouter'])) {
-    
-        $resultat = $monModele->ajouterQuelqueChose($_POST);
-    
-        if ($resultat === 'succes') {
-            setFlash('success', 'Succès !');
-        } elseif ($resultat === 'erreur_saisie') {
-            setFlash('error', 'Erreur !');
-        } else {
-            setFlash('failure', 'Échec !');
-        }
-    
-        header('Location: /ma-page');
-        exit;
-        }
     }
 
     public function modifierColis() {

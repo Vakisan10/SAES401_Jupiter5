@@ -29,6 +29,7 @@
 </aside>
 
 <main class="contenu">
+    <?php require __DIR__ . '/../partials/flash.php'; ?>
 
     <div class="page-header">
         <div class="page-header-info">

@@ -33,8 +33,10 @@ class FinanceController {
         $id = intval($_GET["id"]);
         $this->model->validerDevis($id);
 
-        header("Location: /finance/dashboard");
-        exit;
+        // Ajout du message flash d'après la consigne
+        setFlash('success', 'Devis validé avec succès.'); [cite: 37]
+        header("Location: /finance/dashboard"); [cite: 38]
+        exit; [cite: 39]
     }
 
     public function rejeterDevis() {
@@ -45,7 +47,9 @@ class FinanceController {
         $id = intval($_GET["id"]);
         $this->model->rejeterDevis($id);
 
-        header("Location: /finance/dashboard");
+        // Ajout du message flash d'après la consigne
+        setFlash('error', 'Devis rejeté.'); [cite: 42]
+        header("Location: /finance/dashboard"); [cite: 43]
         exit;
     }
 
@@ -60,24 +64,6 @@ class FinanceController {
      public function bonsCommande() {
         $bons = $this->model->getTousLesBonsCommande();
         require __DIR__ . '/../views/finance/bons-commande.php';
-
-        require __DIR__ . '/../views/partials/flash.php';
-
-        if (isset($_POST['ajouter'])) {
-    
-        $resultat = $monModele->ajouterQuelqueChose($_POST);
-    
-        if ($resultat === 'succes') {
-            setFlash('success', 'Succès !');
-        } elseif ($resultat === 'erreur_saisie') {
-            setFlash('error', 'Erreur !');
-        } else {
-            setFlash('failure', 'Échec !');
-        }
-    
-        header('Location: /ma-page');
-        exit;
-        }
     }
 
     public function budgets() {

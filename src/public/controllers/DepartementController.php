@@ -105,23 +105,6 @@ class DepartementController {
         $colis = $this->model->getColisDepartement($departement_id);
         require __DIR__ . '/../views/departement/mes-colis.php';
 
-        require __DIR__ . '/../views/partials/flash.php';
-
-        if (isset($_POST['ajouter'])) {
-    
-        $resultat = $monModele->ajouterQuelqueChose($_POST);
-    
-        if ($resultat === 'succes') {
-            setFlash('success', 'Succès !');
-        } elseif ($resultat === 'erreur_saisie') {
-            setFlash('error', 'Erreur !');
-        } else {
-            setFlash('failure', 'Échec !');
-        }
-    
-        header('Location: /ma-page');
-        exit;
-        }
     }
 
     public function budget() {

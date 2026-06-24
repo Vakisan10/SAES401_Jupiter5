@@ -161,9 +161,5 @@ class AdminController {
 
         require __DIR__ . '/../views/admin/colis.php';
     }
-
-    public function setFlash(){
-    }
-
     
 }
