@@ -51,7 +51,13 @@ class DirecteurController {
 
         $this->model->signerDevis($id);
 
-        // Retour au dashboard
+        // Notifier le createur du devis que c'est signe
+        $notifService = new NotificationService();
+        $notifService->envoyerNotification(
+            (int) $devis["createur_id"],
+            "Votre devis \"" . $devis["objet"] . "\" a ete signe par le directeur. Un bon de commande a ete genere."
+        );
+
         header("Location: /directeur/dashboard");
         exit;
     }
