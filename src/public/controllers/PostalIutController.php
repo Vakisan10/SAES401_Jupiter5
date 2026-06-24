@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../models/PostalIutModels.php';
+require_once __DIR__ . '/../views/partials/flash.php';
 
 class PostalIutController {
 
@@ -133,7 +134,10 @@ class PostalIutController {
                 $ok = $this->model->insertColis($data);
 
                 if ($ok) {
-                    $message = "Colis ajouté avec succès.";
+                    // Modification d'après l'étape 4 : Utilisation du Flash et redirection stricte
+                    setFlash('success', 'Colis ajouté avec succès.'); [cite: 45]
+                    header("Location: /postal-iut/dashboard"); [cite: 45]
+                    exit; [cite: 45]
                 } else {
                     $message = "Erreur lors de l'enregistrement du colis.";
                 }

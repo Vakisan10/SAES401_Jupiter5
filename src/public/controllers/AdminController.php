@@ -1,24 +1,22 @@
 <?php
 require_once __DIR__ . '/../models/AdminModels.php';
+require_once __DIR__ . '/../views/partials/flash.php';
 
-class AdminController
-{
+class AdminController {
 
     private $model;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->model = new AdminModels();
     }
 
-    public function dashboard()
-    {
+    public function dashboard() {
 
         $stats = [
             "utilisateurs" => $this->model->countUtilisateurs(),
-            "devis" => $this->model->countDevis(),
-            "bons" => $this->model->countBonsCommande(),
-            "colis" => $this->model->countColis()
+            "devis"        => $this->model->countDevis(),
+            "bons"         => $this->model->countBonsCommande(),
+            "colis"        => $this->model->countColis()
         ];
 
         $roles = $this->model->countUtilisateursParRole();
@@ -26,18 +24,16 @@ class AdminController
         require __DIR__ . '/../views/admin/dashboard.php';
     }
 
-    public function utilisateurs()
-    {
+        public function utilisateurs() {
 
         $utilisateurs = $this->model->getTousLesUtilisateurs();
-        $roles = $this->model->getRoles();
+        $roles        = $this->model->getRoles();
         $departements = $this->model->getDepartements();
 
         require __DIR__ . '/../views/admin/utilisateurs.php';
     }
 
-    public function updateUtilisateur()
-    {
+    public function updateUtilisateur() {
 
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             die("Accès invalide");
@@ -54,15 +50,13 @@ class AdminController
     }
 
     // Liste fournisseurs
-    public function fournisseurs()
-    {
+    public function fournisseurs() {
         $fournisseurs = $this->model->getFournisseurs();
         require __DIR__ . '/../views/admin/fournisseurs.php';
     }
 
     // Ajouter
-    public function ajouterFournisseur()
-    {
+    public function ajouterFournisseur() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->model->ajouterFournisseur($_POST);
             header('Location: /admin/fournisseurs');
@@ -71,8 +65,7 @@ class AdminController
     }
 
     // Modifier
-    public function updateFournisseur()
-    {
+    public function updateFournisseur() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->model->updateFournisseur(
                 $_POST['id_fournisseur'],
@@ -83,8 +76,7 @@ class AdminController
         }
     }
 
-    public function modifierFournisseur()
-    {
+    public function modifierFournisseur() {
 
         if (!isset($_GET['id'])) {
             die("ID fournisseur manquant");
@@ -101,14 +93,12 @@ class AdminController
 
     /* ===== DEPARTEMENTS ===== */
 
-    public function departements()
-    {
+    public function departements() {
         $departements = $this->model->getDepartementsAdmin();
         require __DIR__ . '/../views/admin/departements.php';
     }
 
-    public function ajouterDepartement()
-    {
+    public function ajouterDepartement() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->model->ajouterDepartement(
                 $_POST['nom'],
@@ -119,8 +109,7 @@ class AdminController
         }
     }
 
-    public function modifierDepartement()
-    {
+    public function modifierDepartement() {
         if (!isset($_GET['id'])) {
             die("ID département manquant");
         }
@@ -129,8 +118,7 @@ class AdminController
         require __DIR__ . '/../views/admin/modifier-departement.php';
     }
 
-    public function updateDepartement()
-    {
+    public function updateDepartement() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->model->updateDepartement(
                 $_POST['id_departement'],
@@ -142,19 +130,17 @@ class AdminController
         }
     }
 
-    public function devis()
-    {
+    public function devis() {
 
         $stats = $this->model->countDevisParStatut();
 
         $search = $_GET['q'] ?? null;
-        $devis = $this->model->getTousLesDevis($search);
+        $devis  = $this->model->getTousLesDevis($search);
 
         require __DIR__ . '/../views/admin/devis.php';
     }
 
-    public function commandes()
-    {
+    public function commandes() {
 
         $stats = $this->model->countCommandesParStatut();
 
@@ -166,8 +152,7 @@ class AdminController
 
     /* ===== COLIS ===== */
 
-    public function colis()
-    {
+    public function colis() {
 
         $stats = $this->model->countColisParStatut();
 
@@ -176,114 +161,5 @@ class AdminController
 
         require __DIR__ . '/../views/admin/colis.php';
     }
-
-
-    public function exportColis()
-    {
-
-        $colis = $this->model->getTousLesColisAdmin();
-
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="export_colis.csv"');
-
-        $fichier = fopen('php://output', 'w');
-
-        fputcsv($fichier, [
-            'ID',
-            'Numero suivi',
-            'Numero commande',
-            'Departement',
-            'Statut',
-            'Date reception',
-            'Date retrait'
-        ], ';');
-
-        foreach ($colis as $c) {
-            fputcsv($fichier, [
-                $c['id_colis'],
-                $c['numero_suivi'],
-                $c['numero_commande'],
-                $c['departement'],
-                $c['statut'],
-                $c['date_reception'],
-                $c['date_retrait']
-            ], ';');
-        }
-
-        fclose($fichier);
-        exit;
-    }
-
-    public function exportDevis()
-    {
-
-        $devis = $this->model->getTousLesDevisExport();
-
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="export_devis.csv"');
-
-        $fichier = fopen('php://output', 'w');
-
-        fputcsv($fichier, [
-            'ID',
-            'Objet',
-            'Montant estime',
-            'Statut',
-            'Date demande',
-            'Departement',
-            'Fournisseur'
-        ], ';');
-
-        foreach ($devis as $d) {
-            fputcsv($fichier, [
-                $d['id_devis'],
-                $d['objet'],
-                $d['montant_estime'],
-                $d['statut'],
-                $d['date_demande'],
-                $d['departement'],
-                $d['fournisseur']
-            ], ';');
-        }
-
-        fclose($fichier);
-        exit;
-    }
-
-    public function exportBonsCommande()
-    {
-
-        $commandes = $this->model->getTousLesBonsCommandeExport();
-
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="export_bons_commande.csv"');
-
-        $fichier = fopen('php://output', 'w');
-
-        fputcsv($fichier, [
-            'ID',
-            'Numero commande',
-            'Date commande',
-            'Montant estime',
-            'Statut',
-            'Departement',
-            'Fournisseur'
-        ], ';');
-
-        foreach ($commandes as $c) {
-            fputcsv($fichier, [
-                $c['id_bon_commande'],
-                $c['numero_commande'],
-                $c['date_commande'],
-                $c['montant_estime'],
-                $c['statut'],
-                $c['departement'],
-                $c['fournisseur']
-            ], ';');
-        }
-
-        fclose($fichier);
-        exit;
-    }
-
+    
 }

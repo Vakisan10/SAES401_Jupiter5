@@ -95,7 +95,7 @@ class DepartementModels {
      * @param int $createur_id
      * @param string|null $pdfBlob Contenu binaire ou null
      */
-    public function insertDevis($objet, $montant, $fournisseur_id, $createur_id, $pdfBlob = null) {
+    public function insertDevis($objet, $montant, $fournisseur_id, $createur_id, $pdfBlob = null, $commentaire) {
         $sql = "
             INSERT INTO devis
             (date_demande, objet, montant_estime, statut, fournisseur_id, createur_id, fichier_pdf)

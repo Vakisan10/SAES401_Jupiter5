@@ -1,7 +1,6 @@
 <?php
 
 require_once __DIR__ . "/../models/DirecteurModels.php";
-
 class DirecteurController {
 
     private $model;
@@ -74,6 +73,7 @@ class DirecteurController {
     public function bonCommande(){
         $bons = $this->model->getTousLesBonsCommande();
         require __DIR__ . "/../views/directeur-iut/bons-commande.php";
+        // Dans ton Contrôleur (ex: AjouterElementController.php)
     }
 
 
@@ -93,4 +93,5 @@ class DirecteurController {
         $pdfGenerator = new PdfGenerator();
         $pdfGenerator->genererDevis($devis);
     }
+
 }

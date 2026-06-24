@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . "/../models/DepartementModels.php";
-
 class DepartementController {
 
     private $model;
@@ -107,11 +106,11 @@ class DepartementController {
         $bons = $this->model->getMesBonsCommande($departement_id);
         require __DIR__ . '/../views/departement/mes-bons-commande.php';
     }
-
-    public function mesColis() {
+        public function mesColis() {
         $departement_id = $this->getDepartementId();
         $colis = $this->model->getColisDepartement($departement_id);
         require __DIR__ . '/../views/departement/mes-colis.php';
+
     }
 
     public function budget() {
@@ -125,4 +124,5 @@ class DepartementController {
         $fournisseurs = $this->model->getFournisseursAutorises();
         require __DIR__ . "/../views/departement/fournisseurs.php";
     }
+
 }

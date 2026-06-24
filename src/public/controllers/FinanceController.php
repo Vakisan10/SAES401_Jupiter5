@@ -14,10 +14,10 @@ class FinanceController {
             "devis_attente" => $this->model->countDevisEnAttente(),
             "bons_commande" => $this->model->countBonCommande()
         ];
-        $budgets              = $this->model->getBudgetsDepartements();
-        $devis                = $this->model->getDevisEnAttente();
-        $bons                 = $this->model->getBonsCommandeRecents();
-        $commandesEnRetard    = $this->model->getDevisEnRetard();   // ← AJOUT
+        $budgets           = $this->model->getBudgetsDepartements();
+        $devis             = $this->model->getDevisEnAttente();
+        $bons              = $this->model->getBonsCommandeRecents();
+        $commandesEnRetard = $this->model->getDevisEnRetard();
 
         require __DIR__ . "/../views/finance/dashboard.php";
     }
@@ -28,6 +28,7 @@ class FinanceController {
         }
         $id = intval($_GET["id"]);
         $this->model->validerDevis($id);
+        setFlash('success', 'Devis validé avec succès.');
         header("Location: /finance/dashboard");
         exit;
     }
@@ -38,6 +39,7 @@ class FinanceController {
         }
         $id = intval($_GET["id"]);
         $this->model->rejeterDevis($id);
+        setFlash('error', 'Devis rejeté.');
         header("Location: /finance/dashboard");
         exit;
     }
@@ -71,30 +73,22 @@ class FinanceController {
         $pdfGenerator->genererDevis($devis);
     }
 
-
-        public function streamPdfDevis() {
+    public function streamPdfDevis() {
         if (!isset($_GET["id"])) {
             http_response_code(400);
             die("ID devis manquant");
         }
- 
         $id  = intval($_GET["id"]);
         $row = $this->model->getPdfDevis($id);
- 
         if (!$row || empty($row["fichier_pdf"])) {
             http_response_code(404);
             die("PDF introuvable pour ce devis");
         }
- 
-        // Stream du PDF avec les bons headers
         header("Content-Type: application/pdf");
         header("Content-Disposition: inline; filename=\"devis-" . $id . ".pdf\"");
         header("Content-Length: " . strlen($row["fichier_pdf"]));
         header("Cache-Control: private, max-age=0, must-revalidate");
- 
         echo $row["fichier_pdf"];
         exit;
     }
- 
-
 }
