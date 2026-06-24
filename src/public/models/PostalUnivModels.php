@@ -234,7 +234,5 @@ class PostalUnivModels
             "Colis identifié avec le bon de commande " . $numero_commande
         ]);
     }
-
-
-
+    
 }
