@@ -136,8 +136,8 @@ class PostalIutController {
                 if ($ok) {
                     // Modification d'après l'étape 4 : Utilisation du Flash et redirection stricte
                     setFlash('success', 'Colis ajouté avec succès.');
-                    header("Location: /postal-iut/dashboard"); [cite: 45]
-                    exit; [cite: 45]
+                    header("Location: /postal-iut/dashboard");
+                    exit;
                 } else {
                     $message = "Erreur lors de l'enregistrement du colis.";
                 }
